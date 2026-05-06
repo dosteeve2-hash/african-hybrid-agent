@@ -1,0 +1,54 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://local.african-hybrid-agent/evidence-pack.schema.json",
+  "title": "EvidencePack",
+  "type": "object",
+  "required": ["schemaVersion", "generatedAt", "querySummary", "items", "uncertainty"],
+  "properties": {
+    "schemaVersion": { "type": "string", "enum": ["1.0"] },
+    "generatedAt": { "type": "string", "format": "date-time" },
+    "querySummary": { "type": "string", "minLength": 1 },
+    "items": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "label", "excerpt", "reliabilityScore", "tags", "retrievedAt", "sourceKind"],
+        "properties": {
+          "id": { "type": "string" },
+          "label": { "type": "string" },
+          "excerpt": { "type": "string" },
+          "reliabilityScore": { "type": "number", "minimum": 0, "maximum": 100 },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "burkina",
+                "entrepreneuriat",
+                "legal",
+                "sector",
+                "culture",
+                "general"
+              ]
+            }
+          },
+          "retrievedAt": { "type": "string", "format": "date-time" },
+          "sourceRef": { "type": "string" },
+          "sourceKind": {
+            "type": "string",
+            "enum": ["corpus_markdown", "web", "institutional_pdf", "user_validated"]
+          },
+          "corpusChunkId": { "type": "string" }
+        }
+      }
+    },
+    "uncertainty": {
+      "type": "object",
+      "required": ["confidence", "reasons"],
+      "properties": {
+        "confidence": { "type": "number", "minimum": 0, "maximum": 1 },
+        "reasons": { "type": "array", "items": { "type": "string" } }
+      }
+    }
+  }
+}
