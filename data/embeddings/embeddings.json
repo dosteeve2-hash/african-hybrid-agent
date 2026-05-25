@@ -1,0 +1,719 @@
+{
+  "timestamp": "2026-05-25T21:49:06.526Z",
+  "totalFiles": 19,
+  "totalChunks": 71,
+  "totalEmbeddings": 71,
+  "generationTimeMs": 169,
+  "chunks": [
+    {
+      "id": "agent-rag-afrique.md-chunk-0",
+      "sourceFile": "agent-rag-afrique.md",
+      "title": "agent-rag-afrique.md",
+      "region": "UNKNOWN",
+      "credibilityTier": "low",
+      "content": "---\ntitle: Architecture agent RAG pour LLM africain\nsourceType: reference\nregion: Afrique\ncredibilityTier: high\n---\nLe prototype fonctionne comme un agent hybride. Il recoit une question, cherche dans un corpus local versionne, classe les extraits par pertinence, estime la fiabilite des sources, puis injecte ce contexte dans un modele de langage si une cle API est configuree. Sans modele externe, il renvoie une synthese locale des extraits afin de rester testable.\nCette architecture permet de construire progressivement un LLM africain sans pretendre entrainer immediatement un grand modele depuis zero. La premiere etape utile est de creer une couche de connaissance fiable : corpus, validation, retrieval, citations, audit, et API reutilisable par d'autres projets. L'entrainement ou le fine-tuning peut venir ensuite, quand les donnees sont propres, consenties, classees et gouvernees.\nL'agent doit pouvoir travailler pour des cas pratiques : analyser un secteur, trouver des competences locales, proposer des pistes de projet, comparer des problemes terrain, et produire un paquet de preuves reutilisable par Problem to Project Africa. Chaque reponse doit montrer ce qui vient du corpus et ce qui reste a verifier.",
+      "chunkIndex": 0,
+      "embeddingDimensions": 106
+    },
+    {
+      "id": "agriculture-agroecologie-ouest-africain.md-chunk-0",
+      "sourceFile": "agriculture-agroecologie-ouest-africain.md",
+      "title": "agriculture-agroecologie-ouest-africain.md",
+      "region": "UNKNOWN",
+      "credibilityTier": "low",
+      "content": "---\ntitle: \"Agriculture et agroécologie en Afrique de l'Ouest: modèles viables\"\nsourceType: \"ngo\"\nregion: \"BF\"\ncredibilityTier: \"high\"\n---\n# Agriculture et Agroécologie\n## Contexte agroclimatique\nLe Sahel (dont Burkina Faso) connaît:\n- Pluviométrie faible et erratique (300-600 mm/an selon zones)\n- Dégradation des terres (30-50 kg/ha perdus/an)\n- Sécheresses cycliques (2012, 2016, 2022)\n- Sols peu profonds, riches en silice\n## Pratiques agroécologiques adaptées\n### 1. Zaï (puits de plantation)\n- Excavations peu profondes (20-30 cm) remplies de matière organique\n- Augmente rétention eau et fertilité locale\n- Coût: ~2000 FCFA/m² initial (puis gratuit)\n- Productivité: +150% en année sèche par rapport terre nue\n### 2. Demi-lune (or \"demi-lune zaï\")\n- Banquettes semi-circulaires sur pentes\n- Retient l'eau de ruissellement\n- Efficace pour mil, sorgho, arachide\n- Adapté aux petites surfaces (0.5-2 hectares)\n### 3. Cultures de rente viables\n- **Niébé (haricot)**: 500-800 kg/ha, marché locorégional, 150-200 FCFA/kg\n- **Arachide**: Traditionnelle, rendement 800-1200 kg/ha non-amélioré, jusqu'à 2000 kg/ha technique",
+      "chunkIndex": 0,
+      "embeddingDimensions": 99
+    },
+    {
+      "id": "agriculture-agroecologie-ouest-africain.md-chunk-1",
+      "sourceFile": "agriculture-agroecologie-ouest-africain.md",
+      "title": "agriculture-agroecologie-ouest-africain.md",
+      "region": "UNKNOWN",
+      "credibilityTier": "low",
+      "content": "- **Sésame**: Émergent, demande asiatique, 600-1000 kg/ha\n- **Gomme arabique**: Longue durée (5-20 ans), niche riche\n### 4. Élevage intégré\n- Petits ruminants (chèvres, moutons): cycles courts (4-6 mois), marché Ramadan/fêtes\n- Fumier améliore sols, intégration avec agriculture\n- Problème: Pâturages dégradés, compétition eau-élevage-agriculture\n## Partenaires d'appui\n- **INERA** (Institut National d'Études et de Recherches Agricoles): Conseils techniques gratuits\n- **Coopératives**: Approvisionnement en semences certifiées (15-20% meilleur rendement)\n- **Mutuelles de crédit**: Microfinance pour outillage\n- **FONGS** et **RECIT**: Plaidoyer politique agroécologie\n## Rentabilité économique\nExemple: Une famille 5 personnes, 1 hectare de niébé + zaï + petit élevage\n**Revenus annuels estimés:**\n- Niébé 0.5 ha: 600 kg × 180 FCFA = 108,000 FCFA\n- Arachide 0.3 ha: 400 kg × 160 FCFA = 64,000 FCFA\n- Petits ruminants (3 chèvres/an): 2 vendues × 50,000 = 100,000 FCFA\n- **Total: ~272,000 FCFA/an** (≈ $450 USD)\n**Coûts variables:** Semences, outillage loué, main-d'œuvre famille",
+      "chunkIndex": 1,
+      "embeddingDimensions": 91
+    },
+    {
+      "id": "agriculture-agroecologie-ouest-africain.md-chunk-2",
+      "sourceFile": "agriculture-agroecologie-ouest-africain.md",
+      "title": "agriculture-agroecologie-ouest-africain.md",
+      "region": "UNKNOWN",
+      "credibilityTier": "low",
+      "content": "**Marge nette estimée:** 150,000-180,000 FCFA/an après subsistence\n## Obstacles et solutions\n| Obstacle | Solution |\n| --- | --- |\n| Semences de mauvaise qualité | Coopératives certifiées, mélange local/acheté |\n| Pas de capital initial (zaï, outillage) | Tontine locale, crédit solidaire jeunes |\n| Sécheresse imprévisible | Diversification cultures + réserves fourragères |\n| Faible accès marché | Groupements de vente, contrats collectifs |\n| Manque connaissance agroécologie | Champs-écoles, vidéos whatsapp, visites échanges |",
+      "chunkIndex": 2,
+      "embeddingDimensions": 53
+    },
+    {
+      "id": "artisanat-commerce-creaitif.md-chunk-0",
+      "sourceFile": "artisanat-commerce-creaitif.md",
+      "title": "artisanat-commerce-creaitif.md",
+      "region": "UNKNOWN",
+      "credibilityTier": "low",
+      "content": "---\ntitle: \"Artisanat Traditionnel et Commerce Créatif\"\nsourceType: \"community\"\nregion: \"BF,ML,SN,CI,GH,NG,CM,KE,ET,UG\"\ncredibilityTier: \"high\"\n---\n# Artisanat Traditionnel et Commerce Créatif en Afrique\n## 1. Secteurs artisanaux majeurs\n### Textiles et tissage\n- Tissage traditionnel: 100,000+ artisans Afrique (mainly femmes)\n- Techniques: Métiers à main vs mécanique hybride\n- Revenus: 2-5 millions FCFA/an artisan productif\n- Marché: Local 60%, export/tourisme 30%, commandes spéciales 10%\n### Poterie et céramique\n- Artisans: 50,000+ productrices (95% femmes)\n- Production: 100-300 pièces/mois selon complexité\n- Prix détail: 2,000-50,000 FCFA selon taille/design\n- Revenus: 500,000-3 millions FCFA/an artisan\n### Menuiserie et bois\n- Artisans: 200,000+ estimé\n- Produits: Meubles, portes, objets décoration\n- Revenus: Hauts potentiels 3-10 millions/an\n- Qualité: Apprentissage 3-5 ans mastery\n### Bijouterie et métaux\n- Artisans: 30,000+ (hommes majorité)\n- Techniques: Fonte traditions, bijoux argent/or\n- Marché: Tourist 40%, local ceremonial 60%\n- Revenus: 1-4 millions FCFA/an selon renommée\n### Cuirs et peaux",
+      "chunkIndex": 0,
+      "embeddingDimensions": 79
+    },
+    {
+      "id": "artisanat-commerce-creaitif.md-chunk-1",
+      "sourceFile": "artisanat-commerce-creaitif.md",
+      "title": "artisanat-commerce-creaitif.md",
+      "region": "UNKNOWN",
+      "credibilityTier": "low",
+      "content": "- Tannage traditionnel: 20,000+ tanneurs zones cities\n- Produits: Chaussures, vêtements, sacs, bandes\n- Technique défis: Chimiques santé environnement\n- Revenus: 2-5 millions FCFA/an\n## 2. Chaînes valeur artisanat\n### Matières premières sourcing\n- Coton: Accès variable, prix croissants inflation\n- Bois: Deforestation pression, quality declining\n- Teintures: Naturelle vs synthétique trade-offs\n- Coûts: 20-40% produit prix final\n### Production standards qualité\n- Formation: Apprentissage informal 80%, technique variation\n- Standardization: Rare, customization preféré clients\n- Qualité control: Minimal, défauts acceptables market\n- Certification: Fair-trade 5% production seulement\n### Commercialisation canals\n- Marchés locaux: 50-60% ventes volume\n- Intermédiaires: 25-30% commission standard\n- E-commerce: Emerging 5-10% croissance/an\n- Export direct: 10-15% articulate artisans\n### Export markets potentiel\n- Europe: Premium paying 5-10x prix local\n- Diaspora: Strong demand 2-3x prix local\n- Tourismes: Visitors spending +300% vs locals\n- Online platforms: Etsy, Alibaba 200-500% markup potential\n## 3. Défis artisanat traditionnel",
+      "chunkIndex": 1,
+      "embeddingDimensions": 103
+    },
+    {
+      "id": "artisanat-commerce-creaitif.md-chunk-2",
+      "sourceFile": "artisanat-commerce-creaitif.md",
+      "title": "artisanat-commerce-creaitif.md",
+      "region": "UNKNOWN",
+      "credibilityTier": "low",
+      "content": "### Compétition marché\n- Imports: Produits chinois 10-50x moins cher\n- Qualité perception: Industrial seen higher quality\n- Brand recognition: Handicrafts manquent profile\n- E-commerce: Artisans pas digitale capacity\n### Coûts production croissance\n- Matières premières: Inflation 8-12% annuel\n- Transport: Coûts doubler 5 years\n- Énergie: Access electric challenges\n- Labor: Jeunesse exodus reduced apprentices\n### Access capital limitée\n- Crédit: 5-10% artisans obtain financing\n- Taux intérêt: 15-25% miro-finance vs 5-10% agriculture\n- Collateral: Artisans assets limited\n- Capital revolving: Invest production vs equipment\n### Marketing et branding\n- Awareness: Peu local marketing capacité\n- Branding: Individual artisan vs collective\n- Storytelling: Minimal heritage value communication\n- Digital presence: <10% artisans have online shops\n## 4. Innovation artisanat moderne\n### Hybridization traditionnel-moderne\n- Techniques: Blend handmade + machine efficiency\n- Design: Contemporary aesthetics + traditional motifs\n- Materials: Mix traditional + modern (cotton-polyester)\n- Production: Scale up maintaining quality",
+      "chunkIndex": 2,
+      "embeddingDimensions": 99
+    },
+    {
+      "id": "artisanat-commerce-creaitif.md-chunk-3",
+      "sourceFile": "artisanat-commerce-creaitif.md",
+      "title": "artisanat-commerce-creaitif.md",
+      "region": "UNKNOWN",
+      "credibilityTier": "low",
+      "content": "### Designer partnerships\n- Collaborations: Contemporary designers + artisans\n- Collections: Limited edition, storytelling value\n- Premium pricing: 2-5x vs traditional pricing\n- Market: Higher-income consumers, export oriented\n### Certification et valorisation\n- Fair-trade labels: +20% price premium\n- Heritage certification: Geographic indication status\n- Organic dyes: Premium 30-50% vs synthetic\n- Custom orders: +100% margin vs standardized\n### Collective marketing initiatives\n- Cooperative groups: 10-50 artisans united\n- Shared booth tradeshows: Reduced costs\n- Joint export initiatives: Volume + quality assurance\n- Digital platforms: Collective e-commerce\n## 5. Tourisme et artisanat\n### Tourisme market opportunities\n- Visitor spending: $30-100 per craft purchase typical\n- Volume potential: 100,000+ tourists monthly major cities\n- Premium market: Wealthy visitors 3-10x spending\n- Repeat orders: Satisfied tourists network marketing\n### Tourism-artisan integration\n- Direct sales: Workshops customer visits\n- Hotel sales: Commission-based placement\n- Tour guide partnerships: Commission referrals\n- Ethical tourism: Fair prices guaranteed, artisan relations",
+      "chunkIndex": 3,
+      "embeddingDimensions": 96
+    },
+    {
+      "id": "artisanat-commerce-creaitif.md-chunk-4",
+      "sourceFile": "artisanat-commerce-creaitif.md",
+      "title": "artisanat-commerce-creaitif.md",
+      "region": "UNKNOWN",
+      "credibilityTier": "low",
+      "content": "### Tourism infrastructure\n- Craft markets: Formalized spaces 50-200 vendors\n- Galleries: Currated collections higher quality\n- Museums shops: Authentic curated reputation\n- Souvenirs: Mass-produced vs artisanal segments\n### Challenges tourism dependency\n- Seasonality: Tourist season 3-4 months peak\n- Price volatility: Tourist markets fluctuate\n- Quality pressure: Volume versus quality tradeoff\n- Cultural commodification: Risk authenticity loss\n---\n**Potentiel artisanat Africa 2030**:\n- 2 millions emplois quality crafts\n- Export valeur doubled 100+ millions\n- Tourism revenue: $500M+ annually crafts\n- Jeunesse attraction: Modern earning prospects\n- Heritage preservation: Techniques transmitted next-gen",
+      "chunkIndex": 4,
+      "embeddingDimensions": 67
+    },
+    {
+      "id": "bridge-problem-to-project-africa.md-chunk-0",
+      "sourceFile": "bridge-problem-to-project-africa.md",
+      "title": "bridge-problem-to-project-africa.md",
+      "region": "UNKNOWN",
+      "credibilityTier": "low",
+      "content": "---\ntitle: Pont avec Problem to Project Africa\nsourceType: product\nregion: Afrique de l'Ouest\ncredibilityTier: medium\n---\nProblem to Project Africa transforme des problemes observes en pistes de projets, recommandations et opportunites. L'agent hybride africain peut servir de moteur de contexte : lorsqu'un profil mentionne un pays, un secteur, un probleme ou une competence, l'autre application appelle l'API evidence pour recevoir des extraits sourcables, tags, scores de fiabilite et raisons d'incertitude.\nExemple de flux : un utilisateur decrit un probleme agricole, educatif ou entrepreneurial. Problem to Project Africa construit un profil de recommandation. L'agent hybride transforme ce profil en requete, recupere les fragments pertinents du corpus, puis renvoie un paquet de preuves. L'application principale peut ensuite utiliser ces preuves pour eviter les recommandations vagues ou deconnectees du terrain.\nLe pont doit rester simple : API HTTP, contrat stable, authentification optionnelle par cle, et donnees JSON. Cette separation permet de faire evoluer le corpus, les regles de source et le modele LLM sans casser l'experience de l'application principale.",
+      "chunkIndex": 0,
+      "embeddingDimensions": 92
+    },
+    {
+      "id": "burkina-entrepreneuriat-seed.md-chunk-0",
+      "sourceFile": "burkina-entrepreneuriat-seed.md",
+      "title": "burkina-entrepreneuriat-seed.md",
+      "region": "UNKNOWN",
+      "credibilityTier": "low",
+      "content": "---\ntitle: Notes operationnelles - creation d'activite au Burkina Faso\nsourceType: reference\nregion: BF\ncredibilityTier: medium\n---\nCe fichier est un jeu de donnees d'amorcage pour le prototype RAG. Il doit etre enrichi avec des textes officiels, des guides sectoriels valides et des sources verifiables.\nFormalites frequentes a verifier sur les sites officiels avant toute decision : immatriculation aupres des autorites competentes selon la forme juridique, inscription aux registres utiles pour le secteur, obligations fiscales et sociales selon l'activite.\nBonnes pratiques terrain : tester la demande avec de petits prototypes, reduire les dependances a une connexion permanente, privilegier les modeles a faible cout d'amorcage, et documenter les retours clients localement.\nPour la roadmap d'une micro-entreprise : clarifier l'offre, identifier 10 a 20 premiers clients potentiels dans la zone, structurer une offre minimale, puis mesurer la traction avant d'investir lourdement.",
+      "chunkIndex": 0,
+      "embeddingDimensions": 84
+    },
+    {
+      "id": "changement-climatique-resilience.md-chunk-0",
+      "sourceFile": "changement-climatique-resilience.md",
+      "title": "changement-climatique-resilience.md",
+      "region": "UNKNOWN",
+      "credibilityTier": "low",
+      "content": "---\ntitle: \"Changement Climatique et Résilience Environnementale\"\nsourceType: \"ngo\"\nregion: \"BF,ML,SN,CI,GH,NG,KE,UG,ET,RW,TZ,CM,CM,ZA\"\ncredibilityTier: \"high\"\n---\n# Changement Climatique et Résilience Environnementale\n## 1. Impacts climatiques observés\n### Tendances température\n- Augmentation moyenne: +1.5°C depuis 1960\n- Zones critiques: Sahel, East Africa Plus\n- Extrêmes: Vagues chaleur 40-50°C record fréquence\n- Nuits: Minimums augmentent 2x plus que maximums (impact sleep)\n### Variabilité précipitations\n- Sécheresses: Cycles 3-5 ans intensité croissante\n- Crises alimentaires: 2011, 2015-16, 2019-20 famines régionales\n- Inondations: Intensité augmente, dégâts infrastructures énormes\n- Prédictibilité: Saisons moins prévisibles (-25% fiabilité calendrier)\n### Impacts sectoriels\n- Agriculture: Rendement baisse 10-20% prochains 10 ans trend\n- Eau: Sources épuisement 15-30% selon zones\n- Santé: Malnutrition +30%, maladies vector spreading\n- Économie: Perte PIB 3-5% baseline scénarios modérés\n## 2. Agriculture résilience climatique\n### Variétés adaptées sécheresse\n- Millets/sorgho: Plus résistant maïs, retours faibles 25% bas\n- Nièbé: Nitrogen-fixing, drought-tolerant, value-added possible\n- Arachides: Développement variétés courtes-cycle (60 vs 90 jours)",
+      "chunkIndex": 0,
+      "embeddingDimensions": 103
+    },
+    {
+      "id": "changement-climatique-resilience.md-chunk-1",
+      "sourceFile": "changement-climatique-resilience.md",
+      "title": "changement-climatique-resilience.md",
+      "region": "UNKNOWN",
+      "credibilityTier": "low",
+      "content": "- Cultures alternatives: Manioc famine crop, yam zones humides\n### Techniques conservation eau\n- Zaï pits: Rétention 50-100mm pluie, productivity +70%\n- Demi-lunes: Collecte runoff, 30-40 cm profondeur\n- Agroforesterie: Arbres complément+protection cultures\n- Mulch practice: Réduction évaporation 30-40%, weed control\n### Diversification revenus\n- Livestock: Intégration petit-ruminants cropping\n- Apiculture: Adaptée sécheresse, revenus cash importants\n- Produits forestiers: Fruits, gomme, miel non-timber forests\n- Agrotourisme: Fermes écotourisme income streams\n### Assurance climat\n- Index-based: Paiements automatiques baisse pluie\n- Coûts: 5,000-15,000 FCFA primes annuelles\n- Uptake: 3-5% agriculteurs assurés (adoption croissante)\n- Effectiveness: 80% satisfactionclients payements timely\n## 3. Eau ressources management\n### Stress hydrique\n- Aquifers: Recharge lenteur, extraction dépasse 20-40%\n- Surface water: Fluctuation saisonnière extrême\n- Qualité: Salinité croissante zones semi-arides\n- Access inequality: Urban 80% vs rural 30% accès water\n### Gestion intégrée eau\n- Bassins versants: Approche multiuse coordination\n- Recharge naturelle: Barrages perméables, puits recharge",
+      "chunkIndex": 1,
+      "embeddingDimensions": 112
+    },
+    {
+      "id": "changement-climatique-resilience.md-chunk-2",
+      "sourceFile": "changement-climatique-resilience.md",
+      "title": "changement-climatique-resilience.md",
+      "region": "UNKNOWN",
+      "credibilityTier": "low",
+      "content": "- Économie eau: Irrigation efficiency 30-40% gain possible\n- Conflits resolution: Comités eau multi-stakeholder\n### Infrastructure água resilience\n- Small reservoirs: Stockage 3-6 months supply\n- Boreholes: Forage profond stable supplies\n- Rainwater harvest: Citernes, micro-catchments\n- Transfrontier water: Nile, Niger, Congo gestion treaties\n## 4. Énergie transitions vers renouvelables\n### Mitigation GES\n- Énergie fossile: Coûts croissants fuel, pollution\n- Transition urgence: Coal replacement 2025-2030 targets\n- Grid: Énergie intermittency challenges wind/solar\n- Hybridation: Mix storage, backup, flexibility\n### Secteur agriculture émissions\n- Livestock: 40% agricultural GES (méthane entérique)\n- Déforestation: Agriculture croissance couvert 60% deforestation\n- Engrais: Nitrogen oxyde potent GES\n- Mitigation: Improved cattle feeds, agroforestry, organic\n### Adaptation côtière\n- Élévation mers: 0-2 mm/an Africa sub-Sahara\n- Erosion côtière: Villes-ports vulnérables (Lagos, Dar-es-Salaam)\n- Infrastructure: Ports, villes coûts relocation énormes\n- Nature-based solutions: Mangroves, coral reefs protection\n## 5. Reforestation et conservation\n### Déforestation trends\n- Pertes: 3-4 millions hectares Africa/an",
+      "chunkIndex": 2,
+      "embeddingDimensions": 112
+    },
+    {
+      "id": "changement-climatique-resilience.md-chunk-3",
+      "sourceFile": "changement-climatique-resilience.md",
+      "title": "changement-climatique-resilience.md",
+      "region": "UNKNOWN",
+      "credibilityTier": "low",
+      "content": "- Causes: Agriculture 70%, charbon bois 15%, bois construction 15%\n- Impacts: Carbon release 400-600 Mtpa, habitat loss\n- Gradient: East/West Africa pire vs Central Africa mieux\n### Reboisement initiatives\n- Grands projet: Great Green Wall Sahel, billion tree initiative\n- Community forestry: 10,000+ groups management locale\n- Agroforesterie adoption: 5-10% croissance/an zones focus\n- Carbon finance: REDD+ payments 50-100 USD/hectare/an potential\n### Restoration modèles\n- Assisted natural regeneration: Enlèvement pressure, reboises self\n- Nurseries locales: Millions seedlings production natives\n- Ecosystem services: Hydrological, carbon, biodiversity\n- Livelihood integration: Revenus miel, fruits, bois énergie\n### Protected areas governance\n- Coverage: 8-12% land Africa protected (vs 15% global target)\n- Management: 30-40% pauvre resourced, community exclusion\n- Effectiveness: 60-70% parks perdent species vs expansion\n- Model succès: Community-conservancy Kenya 80% species retention\n---\n**Trajectoire climatique resilience Africa**:\n- Émissions control: Net-zero 2050 possible with policy\n- Adaptation priorité: Loss/damage costs 290+ billions/an 2050",
+      "chunkIndex": 3,
+      "embeddingDimensions": 110
+    },
+    {
+      "id": "changement-climatique-resilience.md-chunk-4",
+      "sourceFile": "changement-climatique-resilience.md",
+      "title": "changement-climatique-resilience.md",
+      "region": "UNKNOWN",
+      "credibilityTier": "low",
+      "content": "- Nature-based solutions: 40% mitigation potential\n- Just transition: Emploi vert millions opportunités",
+      "chunkIndex": 4,
+      "embeddingDimensions": 11
+    },
+    {
+      "id": "contre-biais-narratif-afrique.md-chunk-0",
+      "sourceFile": "contre-biais-narratif-afrique.md",
+      "title": "contre-biais-narratif-afrique.md",
+      "region": "UNKNOWN",
+      "credibilityTier": "low",
+      "content": "---\ntitle: Rappel methodologique - eviter les recits mediatiques deformes\nsourceType: community\nregion: continental\ncredibilityTier: low\n---\nLes resultats des moteurs de recherche ou des medias lointains peuvent sur-representer certains angles, comme l'insecurite ou les cliches environnementaux, et sous-representer la vie quotidienne, les innovations locales et les nuances regionales.\nL'assistant doit distinguer les faits attestes et les interpretations, privilegier les sources locales ou institutionnelles quand elles existent, et signaler l'incertitude quand les donnees manquent.\nUn contre-biais serieux ne fabrique pas une version idealisee du terrain. Il rend les preuves visibles, accepte les contradictions et propose une prochaine verification quand le corpus ne suffit pas.",
+      "chunkIndex": 0,
+      "embeddingDimensions": 66
+    },
+    {
+      "id": "droit-foncier-propriete-conflits-terre.md-chunk-0",
+      "sourceFile": "droit-foncier-propriete-conflits-terre.md",
+      "title": "droit-foncier-propriete-conflits-terre.md",
+      "region": "UNKNOWN",
+      "credibilityTier": "low",
+      "content": "---\ntitle: \"Droit Foncier, Propriété et Conflits Terre\"\nsourceType: \"government\"\nregion: \"BF,ML,SN,CI,GH,NG,KE,UG,ET,RW,TZ\"\ncredibilityTier: \"high\"\n---\n# Droit Foncier, Propriété et Conflits Terre en Afrique\n## 1. Systèmes terre actuels\n### Tenure formelle vs informelle\n- Titres formels: 10-25% exploitations en Afrique sub-Saharienne\n- Terres communales: 40-50% zones rurales gérées collectivement\n- Droits customaires: 50-70% populations dépendent autorités locales\n- Documentation: Cadastre incomplet 80%+ zones rurales\n### Insécurité foncière impacts\n- Investissement agricole: 40% moins sans garantie titre\n- Crédit accès: 50% paysans refusés prêt manque garantie foncière\n- Femmes exclusion: 85% terres femmes sans titre légal\n- Jeunes migration: Manque terres pousse 2-3 millions/an cities\n### Conflits terre prevalence\n- Disputes voisinage: 15-30% populations impliquées litiges fonciers\n- Conflits pastoralistes: Zones sèche, 5-8 conflits/an mortels\n- Acquisitions externes: \"Land-grabs\" 20-50 millions hectares decade\n- Déplacements forcés: 500,000+ familles/an expulsions (agri-business)\n## 2. Cadastre et systèmes enregistrement\n### Cadastre traditionnel\n- Méthodes: Limites visuelles, témoins famille, pas documents",
+      "chunkIndex": 0,
+      "embeddingDimensions": 90
+    },
+    {
+      "id": "droit-foncier-propriete-conflits-terre.md-chunk-1",
+      "sourceFile": "droit-foncier-propriete-conflits-terre.md",
+      "title": "droit-foncier-propriete-conflits-terre.md",
+      "region": "UNKNOWN",
+      "credibilityTier": "low",
+      "content": "- Disputes: Redrawing limites fréquent, mémoire collective\n- Coûts: Processus coutumier gratuit mais lent resolution\n- Recognition: Rarement accepté cours légal moderne\n### Cadastre formels computerisé\n- Coverage: 20-40% zones urbaines principalement\n- Coûts numérisation: 50,000-500,000 FCFA/parcelle (prohibitif zones rurales)\n- Délais: 6-24 mois processus formalisation complète\n- Maintenance: Mutations fréquentes, 30-50% registres obsolètes\n### Land information systems alternatives\n- Mobile cadastre: Apps mapping GPS parcelles, coûts $0.50-5 par terre\n- Community-based: Cartographie participative + Google Earth\n- Blockchain pilots: Immutable records, pilot Kenya/Ghana/Nigeria\n- Hybrid models: Registres formels + digital backup communautaire\n### Registrations digitales scaling\n- Morocco/Kenya: 1+ million parcelles digitalisées passées 5 ans\n- Coûts reduction: $100/parcelle actuel vs $500+ avant\n- Uptake: Women +30% registration lorsqu'accessible\n- Acceptance: Trust croissant, mortalité disputes 20-30% baisse\n## 3. Femmes et droits fonciers\n### Situation femmes terre\n- Ownership: 10-20% femmes détiennent terre seules\n- Access: 50% femmes access par mari/père, risk veuvage perte",
+      "chunkIndex": 1,
+      "embeddingDimensions": 106
+    },
+    {
+      "id": "droit-foncier-propriete-conflits-terre.md-chunk-2",
+      "sourceFile": "droit-foncier-propriete-conflits-terre.md",
+      "title": "droit-foncier-propriete-conflits-terre.md",
+      "region": "UNKNOWN",
+      "credibilityTier": "low",
+      "content": "- Succession: Veuves expulsées souvent post-décès mari (70% cas)\n- Accès crédit: 15% femmes agriculteurs sans terre pas prêt access\n### Barrières légales et coutumières\n- Lois customaire: Souvent exclut femmes héritage\n- Mariage séparation: Conflit possession terre très complexe\n- Minorité légal: Jeunes filles 18-25 manquent titre propre\n- Polygamie complexités: Droits multiples veuves, disputes\n### Reforma légale impacts\n- Lois nouvelles: 35+ pays Africa réforma droit foncier femmes\n- Implementation gaps: Lois existent mais appliquées 30-50% seulement\n- Awareness: 40% femmes ignorent droits légaux land ownership\n- Judicial culture change: Lenteur, judges souvent conservateurs\n### Intervention efficaces\n- Women groups: Acquisition collective parcelles, sécurité 90% meilleures\n- Veuves support: Aide légale gratuite succession, rétention 80%\n- Education femmes: Ateliers droits, augmentation claims 3x\n- Registrations incentives: Subsidies femmes titres, uptake +150%\n## 4. Gestion conflits fonciers\n### Resolution mechanisms traditionnel\n- Chiefs/elders: 70-80% disputes resolues collectivement\n- Temps: Audiences publics 1-3 mois dénouement",
+      "chunkIndex": 2,
+      "embeddingDimensions": 104
+    },
+    {
+      "id": "droit-foncier-propriete-conflits-terre.md-chunk-3",
+      "sourceFile": "droit-foncier-propriete-conflits-terre.md",
+      "title": "droit-foncier-propriete-conflits-terre.md",
+      "region": "UNKNOWN",
+      "credibilityTier": "low",
+      "content": "- Acceptance: 70-85% population accepte decisions\n- Limitation: Parfois biased, femmes sous-represented voix\n### Processus formels judicial\n- Courts: Procédures 2-5 ans, coûts 500,000 FCFA+\n- Backlog: Courts surchargés 500-2,000 cas/juge/an\n- Corruption: 20-40% cas rapportent pots-de-vin judges\n- Results: 10-30% satisfactin population cours verdicts\n### Mediation alternatif/\n- Mediators formés: 1,000+ mediators zones cibles\n- Taux succès: 60-75% conflits resolus sans court\n- Temps: 2-6 semaines vs 2-5 ans judicial\n- Coûts: 10,000-50,000 FCFA vs 500,000+ courts\n### Community land resource management\n- Local resource groups: Gestion forêts/pâturages/eau collectif\n- Bylaws: Règles locales saisonnalité use, amendes infractions\n- Tracking: Registres simples (paper ou digital)\n- Equity: Accès pauvres/femmes/jeunes formalisé 50%+ better\n## 5. Données foncière et planification\n### Informations terra manquantes\n- Base données: <10% villages Africa ont cadastre minimal\n- Dynamique: Terrains occupés change 5-15% annuel, registres obsolètes\n- Ownership validation: Difficile confirm propriétaires légitimes\n- Planification: Impossible ohne données infrastructure village/towns",
+      "chunkIndex": 3,
+      "embeddingDimensions": 105
+    },
+    {
+      "id": "droit-foncier-propriete-conflits-terre.md-chunk-4",
+      "sourceFile": "droit-foncier-propriete-conflits-terre.md",
+      "title": "droit-foncier-propriete-conflits-terre.md",
+      "region": "UNKNOWN",
+      "credibilityTier": "low",
+      "content": "### Données collect methodologies\n- GPS surveys: Coûts $50-200/hectare, accuracy +/-5m\n- Remote sensing: Satellite/drone imagery coûts $0.50-5/hectare\n- Community mapping: Training locals GPS, participation +80%\n- Crowdsourcing: Mobile apps citizen reporting, cost-effective\n### Utilisation données\n- Planification urban: Zoning development, prevention sprawl\n- Fiscalité foncière: Property tax assessment base données\n- Development: Identification zones infrastructure investment\n- Conservation: Protection écosystèmes, species habitats\n### Proprietary systems integration\n- CKAN platforms: Open data sharing multi-countries\n- Regional hubs: East Africa Land Data Hub, standardization\n- Interoperability: APIs permettent access applications tierces\n- Confidentiality: Sensitive data protection regulations GDPR-like\n---\n**Réformes prioritaires tenure terre Africa**:\n- 80% populaiton have secure land rights 2030\n- Women 40% titre ownership\n- Cadastre 100% digital accessible\n- Disputes resolution <6 months average",
+      "chunkIndex": 4,
+      "embeddingDimensions": 96
+    },
+    {
+      "id": "eau-assainissement-hygiene-afrique.md-chunk-0",
+      "sourceFile": "eau-assainissement-hygiene-afrique.md",
+      "title": "eau-assainissement-hygiene-afrique.md",
+      "region": "UNKNOWN",
+      "credibilityTier": "low",
+      "content": "---\ntitle: \"Eau, Assainissement et Hygiène en Afrique\"\nsourceType: \"ngo\"\nregion: \"BF,ML,SN,CI,GH,NG,KE,UG,TZ,ET,RW\"\ncredibilityTier: \"high\"\n---\n# Eau, Assainissement et Hygiène en Afrique\n## 1. Accès eau potable\n### Situation actuelle\n- Accès eau sources améliorées: 60-75% population total\n- Accès zones rurales: 35-50% seulement\n- Distance moyenne puits/forage: 1-3 km zones reculées\n- Temps collection: 1-3 heures/jour surtout femmes enfants\n### Qualité eau\n- Contamination bactérienne: 40-60% sources testées\n- Nitrates agricoles: 15-25% puits zones farming\n- Salinité: 8-12% eaux souterraines inutilisables\n- Cholera episodes: Saison pluies, perte vies 5-15%\n### Infrastructures existantes\n- Forages: 2,000+ forages villages Burkina, maintenabilité 60%\n- Puits: 50,000+ puits traditionnels, productivité faible sec\n- Réseaux publics: Couverture 40% villes, perte distribution 30-40%\n- Réservoirs: Chaînes approvisionnement fragiles\n### Solutions low-cost\n- **Bio-sand filters**: $5-15 filtre famille, réduction contamination 90%\n- **Forage manuelle**: Coût $100-300, maintenance locale possible\n- **Récolte eau pluie**: Citernes 5,000-10,000L, saison sèche limité",
+      "chunkIndex": 0,
+      "embeddingDimensions": 92
+    },
+    {
+      "id": "eau-assainissement-hygiene-afrique.md-chunk-1",
+      "sourceFile": "eau-assainissement-hygiene-afrique.md",
+      "title": "eau-assainissement-hygiene-afrique.md",
+      "region": "UNKNOWN",
+      "credibilityTier": "low",
+      "content": "- **Puits améliorés**: Ciment ring, couverture, 3-5 ans durée supplémentaire\n## 2. Assainissement & hygiène\n### Situation critique\n- Population sans toilettes: 35-50% Afrique sub-Saharienne\n- Défécation ouverte: 20-35% zones rurales, impacts santé énormes\n- Toilettes fonctionnelles: 50% non-maintenus après construction\n- Gestion déchets fécaux: Absence vidage, contamination sol/eau\n### Impacts santé\n- Diarrhées aqueuses: 5-8 millions décès/an enfants <5 ans Afrique\n- Choléra: Épidémies 2-3 ans lorsque assainissement déficient\n- Helminthes intestinales: 40-50% enfants en zones sans toilettes\n- Typhoïde: 11 millions cas/an, souvent eau contaminée\n### Toilettes appropriées\n- **Fosse améliorée**: $20-50, creusage 2m profond, durée 10-15 ans\n- **Toilettes WASH**: Éléments préfab, sans eau, coût $30-80\n- **VIP latrine**: Ventilated, élimine odeurs, attrait culturel +60%\n- **Chimique portable**: Événements temporaires, pas solution durable\n### Promotion comportement\n- Mentalité open-defecation: Tradition 70+ ans, changement lent\n- Sensibilisation villages: Animations école, démonstrations maladies\n- Femmes pionnières: Construisent toilet première, autres suivent",
+      "chunkIndex": 1,
+      "embeddingDimensions": 95
+    },
+    {
+      "id": "eau-assainissement-hygiene-afrique.md-chunk-2",
+      "sourceFile": "eau-assainissement-hygiene-afrique.md",
+      "title": "eau-assainissement-hygiene-afrique.md",
+      "region": "UNKNOWN",
+      "credibilityTier": "low",
+      "content": "- Champions locaux: Enfants ambassadeurs changement très efficace\n## 3. Hygiène menstruations\n### Accès produits\n- Serviettes hygiéniques: 40,000-50,000 FCFA/mois salaire vs besoin\n- Produits réutilisables: Ignorance + coûts initial, adoption croissante\n- DIY solutions: Tissus, coton, efficacité variable, infections risques\n### Absence école\n- Absences menstruelles: 15-20% filles manquent 3-5 jours/mois école\n- Performance académique: Impacte notes, concentration réduite 30%\n- Stigmatisation: Menstruation tabou, honte dans collectivités\n- Infrastructures: 60% écoles sans toilettes femmes séparées\n### Interventions efficaces\n- **Distribution gratuite**: 3-month supply réduit absences 40%\n- **Éducation normalisation**: Curriculum santé réduit stigma\n- **Toilettes dignité**: Locaux privés + incartades gratuit = game-changer\n- **Groupes pairs**: Discussions menstruation normalisent, soutien +60%\n## 4. Hygiène mains & lavage\n### Comportements actuels\n- Lavage mains après toilette: 30-40% population avec eau+savon\n- Avant manger: 15-25% seulement\n- Après contact fèces enfant: 20-30%, risque contamination énorme\n- Points eau savon: <5% écoles, <20% structures santé",
+      "chunkIndex": 2,
+      "embeddingDimensions": 98
+    },
+    {
+      "id": "eau-assainissement-hygiene-afrique.md-chunk-3",
+      "sourceFile": "eau-assainissement-hygiene-afrique.md",
+      "title": "eau-assainissement-hygiene-afrique.md",
+      "region": "UNKNOWN",
+      "credibilityTier": "low",
+      "content": "### Coûts & accessibilité\n- Savon: 500-1,000 FCFA bloc, \"luxe\" pour 50% populations\n- Alternatives: Cendre, herbes traditionnelles, efficacité variable\n- Points eau: Construction mini-robinet $5-20, changement bahavioral énorme\n- Tippy taps: DIY jerrycan +tuyau, gratuit quasi-total\n### Efficacité interventions\n- Lavage mains eau + savon: Réduit diarrhée 40-50%, réduction coûts santé\n- Hygiène digitale: QR codes campagnes \"Main propre = Vie sûre\"\n- Enfants champions: Transmission pairs 3x plus efficace que adultes\n- Écoles latrines eau+savon: Impact communauté +20% hors-école\n## 5. Sanitation pour réfugiés & déplacés\n### Contextes fragilité\n- Camps réfugiés: 40,000-300,000 personnes, densité extrême\n- Hygiène précaire: Toilettes 1 pour 20-50 personnes vs 1/10 standard\n- Épidémies: Diarrhée, choléra, dysenterie ravageurs rapides\n- Eau distribution: Véhicules 2x semaine, insuffisant\n### Solutions WASH urgence\n- **Toilettes emergent**: Fosse temporaire + tente, installation 48h\n- **Réservoirs eau**: Stockage 3-5 jours, distribution cérémonie horaires\n- **Hygiène kits**: Savon, brosses dents, serviettes, psychosocial",
+      "chunkIndex": 3,
+      "embeddingDimensions": 99
+    },
+    {
+      "id": "eau-assainissement-hygiene-afrique.md-chunk-4",
+      "sourceFile": "eau-assainissement-hygiene-afrique.md",
+      "title": "eau-assainissement-hygiene-afrique.md",
+      "region": "UNKNOWN",
+      "credibilityTier": "low",
+      "content": "- **Formation WASH**: Groupes hygiène mobiles, suivi quotidien\n### Maintien social santé mentale\n- Hygiène rétablissement: Toilettes dignité, eau chaude réconfort psych\n- Gestion déchets menstruels: Privacy taboo brisé, vulnérabilité réduite\n- Hygiène spirituelle: Ablutions religieuses, respect normes culturelles\n---\n**Impact potentiel**:\n- Réduction diarrhée enfants 40-50%\n- Absences école filles -60% accès produits\n- Maladies eau-borne -70% toilettes+hygiène\n- Revenus femmes +30% temps libéré (eau collection)",
+      "chunkIndex": 4,
+      "embeddingDimensions": 49
+    },
+    {
+      "id": "energie-renouvelable-electricite.md-chunk-0",
+      "sourceFile": "energie-renouvelable-electricite.md",
+      "title": "energie-renouvelable-electricite.md",
+      "region": "UNKNOWN",
+      "credibilityTier": "low",
+      "content": "---\ntitle: \"Énergie Renouvelable et Accès Électricité\"\nsourceType: \"ngo\"\nregion: \"BF,ML,SN,CI,GH,NG,KE,UG,ET,RW,TZ,ZA\"\ncredibilityTier: \"high\"\n---\n# Énergie Renouvelable et Accès Électricité en Afrique\n## 1. Situation actuelle électrification\n### Coberture électrique\n- Accès électricité: 45% Afrique sub-Saharienne total\n- Zones urbaines: 70-85% couverture\n- Zones rurales: 15-35% couverture\n- Off-grid: 60% populations rurales sans accès réseau\n### Coûts forbidding\n- Connexion réseau: 500,000-2 millions FCFA ($830-3,330)\n- Abonnement mensuel: 8,000-15,000 FCFA minimum\n- KWh coût: 200-400 FCFA pour classe moyenne, 3-5% revenu\n### Impact pauvreté énergétique\n- Lampes à kérosène: 50% familles rurales (coûts 10K FCFA/mois, toxiques)\n- Batteries rechargeables: Baz durée 8-12 heures, coûts importants\n- Productivité: Sans électricité, petits commerces ferment 18h\n- Éducation: Étude après crépuscule impossible, abandon scolaire\n## 2. Solaire off-grid solutions\n### Petits systèmes solaires (SHS)\n- Panneaux 10-50W + batterie + charge contrôleur: $50-300\n- Coût par kWh: $0.25-0.50 (vs grid $0.04)\n- Durée système: 10-15 ans avec maintenance",
+      "chunkIndex": 0,
+      "embeddingDimensions": 87
+    },
+    {
+      "id": "energie-renouvelable-electricite.md-chunk-1",
+      "sourceFile": "energie-renouvelable-electricite.md",
+      "title": "energie-renouvelable-electricite.md",
+      "region": "UNKNOWN",
+      "credibilityTier": "low",
+      "content": "- Utilisations: Éclairage, phone charge, TV petit\n### Solar home systems diffusion\n- Pay-as-you-go models: Paiements fractionnés $0.50-2/jour\n- Taux adoption: 20-40% croissance annuelle zones cibles\n- Client profil: Femmes 60% utilisateurs, chefs familles\n- Impact business: Micro-commerce 18h→22h (20% revenu +)\n### Charge solaire communautaires\n- Installation villages: Panneaux 200-500W + batteries 10kWh\n- Heures service: 18h-22h éclairage public + charging\n- Coûts: $2,000-5,000 installation, 500-1,000 FCFA/mois revenus\n- Modèles governance: Comités gestion, tarifs socialisés\n### Défis SHS\n- Maintenance: 30% systèmes non-maintenus après 2 ans\n- Training: Utilisateurs ignorent capacités réelles\n- Financement: Pay-as-you-go attrition 15-25% clients/an\n- Recyclage batteries: Pollution risques, protocols limités\n## 3. Mini-grids électrification\n### Infrastructure mini-grids\n- Groupes électrogènes diesel: 20-100 kW, $3,000-15,000\n- Panneaux solaires + batterie: Coûts baissent 50% 5 ans\n- Distribution câbles: Flexibilité topologie village\n- Utilisateurs: 100-500 connections typiquement\n### Opérations mini-grids\n- Tarifs: 300-600 FCFA/kWh (profitable pour opérateur)",
+      "chunkIndex": 1,
+      "embeddingDimensions": 103
+    },
+    {
+      "id": "energie-renouvelable-electricite.md-chunk-2",
+      "sourceFile": "energie-renouvelable-electricite.md",
+      "title": "energie-renouvelable-electricite.md",
+      "region": "UNKNOWN",
+      "credibilityTier": "low",
+      "content": "- Utilisation typique: Éclairage 18h-23h, commerce jour\n- Fiabilité: 85-95% availability quand bien maintenus\n- Revenue: $200-1,000/mois opérateur pays en développement\n### Viabilité financière\n- Paiement clients: 50-70% base, reste crédit mauvais\n- Coûts diesel: 40-50% operating costs, volatilité prix\n- Financement initial: Difficile (mini-grids pas bankable)\n- Subvention modèle: Public 40%, private 60% capital\n## 4. Gaz domestique (LPG)\n### Électrification alternative cuisines\n- Problème: 75% populations cuisent bois/charbon (indoor pollution)\n- Emission: 4 million morts/an fumée intérieure Afrique + Asie\n- Solutions: Gaz LPG bouteilles 6-12kg, brûleurs efficaces\n### Accès LPG accessibility\n- Coûts bouteille: 12,000-18,000 FCFA recharge (cuisson 1-2 mois)\n- Infrastructure: Distributeurs limités zones rurales\n- Sécurité: Formation nécessaire, quelques accidents\n- Transition: Acceptation lente, attachement traditions\n### Impact santé+environnement\n- Pollution intérieur: Réduction 90% vs bois combustion\n- Santé respiratory: Réduction maladies 40-60%\n- Forêts: Réduction déforestation +20% si adoption large\n- Genre: Femmes temps recette réduction 50% (moins collecte bois)",
+      "chunkIndex": 2,
+      "embeddingDimensions": 108
+    },
+    {
+      "id": "energie-renouvelable-electricite.md-chunk-3",
+      "sourceFile": "energie-renouvelable-electricite.md",
+      "title": "energie-renouvelable-electricite.md",
+      "region": "UNKNOWN",
+      "credibilityTier": "low",
+      "content": "## 5. Hydroélectricité petite échelle\n### Potentiel Africa\n- Petites rivières: 1,000+ sites potentiels micro-hydro 10-100 kW\n- Flux saisonnier: Disponibilité 6-9 mois meilleur, 2-3 mois critique\n- Investissement: $3,000-10,000/kW installation\n- ROI: 4-8 ans zones haute demande électricité\n### Technologie adaptée\n- Turbines Pelton/cross-flow: Robustes, maintenance locale possible\n- Coûts équipement: $500-2,000 importation vs $3,000+ achat industriel\n- Installation DIY: Possible avec ingénieur local formation\n- Longevity: 20-30 ans opération si maintenance régulière\n### Modèles governance\n- Community-owned: Comité gestion, tarifs socialisés, pérennité variable\n- Private operator: Plus reliabilité, risque propriétaire quitte\n- Public-private: État infrastr, privé opération\n- Best model: Community ownership + technician formation + govt subsidy\n## 6. Efficacité énergétique\n### Réduction consommation\n- Ampoules LED: Remplacement incandescents réduit 80% consommation\n- Coûts: Ampoule LED 1,500 FCFA vs 200 incandescent, durée 8x\n- Payback: 4-6 mois consommation réduite\n- Adoption: 50-70% zones urbaines, 15-25% zones rurales",
+      "chunkIndex": 3,
+      "embeddingDimensions": 95
+    },
+    {
+      "id": "energie-renouvelable-electricite.md-chunk-4",
+      "sourceFile": "energie-renouvelable-electricite.md",
+      "title": "energie-renouvelable-electricite.md",
+      "region": "UNKNOWN",
+      "credibilityTier": "low",
+      "content": "### Cuisines efficiency\n- Foyers améliorés: Réduction bois 50%, coûts $5-30\n- Marmites pressure: Réduction temps cuisin 30%, carburant 20%\n- Formation: Démonstrations femmes, adoption dépend maintenance\n### Systèmes frigorifiques\n- Ice production: Importance pêche post-capture, fruits\n- SHS-powered fridges: 50-100W systems viables, coûts $200-500\n- Stockage fruits: Multiplication revenus 3-5x (vente fraîche extended)\n- Modèle communautaire: Ice-making service, revenus $50-200/mois\n---\n**Objectif énergétique Africa**:\n- 2030: 80% électrification\n- Énergie renouvelable 50% capacity\n- Off-grid solutions 30 millions personnes",
+      "chunkIndex": 4,
+      "embeddingDimensions": 59
+    },
+    {
+      "id": "entrepreneuriat-femmes-inclusion-financiere.md-chunk-0",
+      "sourceFile": "entrepreneuriat-femmes-inclusion-financiere.md",
+      "title": "entrepreneuriat-femmes-inclusion-financiere.md",
+      "region": "UNKNOWN",
+      "credibilityTier": "low",
+      "content": "---\ntitle: \"Entrepreneuriat des femmes et inclusion financière en Afrique de l'Ouest\"\nsourceType: \"ngo\"\nregion: \"BF\"\ncredibilityTier: \"high\"\n---\n# Entrepreneuriat des femmes\n## Contexte socioéconomique\n### Défis structurels\n- Accès terre limité (héritage patrilinéaire souvent)\n- Crédit difficile sans garantie/homme référent\n- Accumulation de charges: reproduction (enfants), production, travail domestique\n- Alphabétisation féminine: ~29% au Burkina (vs 43% hommes)\n### Forces\n- Tontines et groupements de femmes très organisés\n- Demande forte pour services femmes (transformation aliments, savon, textile)\n- Motivation élevée (\"ma famille d'abord\")\n- Réseaux de transmission (entre mères/sœurs)\n## Secteurs viables pour femmes\n### 1. Transformation alimentaire\n- **Farine composite** (mil + niébé + arachide): nutritive, durée conservation 6+ mois\n- Investissement initial: 200,000-500,000 FCFA (petit matériel + sacs)\n- Marché: Écoles, ONG, marchés urbains\n- Marge: 30-40%\n- **Beurre de karité artisanal**: Demande mondiale, prix 8,000-12,000 FCFA/kg\n- Collecte noix sauvage (saisonnière) + traitement simple",
+      "chunkIndex": 0,
+      "embeddingDimensions": 97
+    },
+    {
+      "id": "entrepreneuriat-femmes-inclusion-financiere.md-chunk-1",
+      "sourceFile": "entrepreneuriat-femmes-inclusion-financiere.md",
+      "title": "entrepreneuriat-femmes-inclusion-financiere.md",
+      "region": "UNKNOWN",
+      "credibilityTier": "low",
+      "content": "- Groupement femmes: Économies d'échelle, traçabilité\n- **Sauces fermentées** (miel + épices, sauce d'arachide): Faible capital, marché proximité\n### 2. Savon et soins corporels\n- Demande: Hygiène, tendance beauté urbaine\n- Savon à froid: 100-150 FCFA coût production, 300-500 FCFA vente\n- Viabilité: 50-100 unités/jour = revenu 15,000-50,000 FCFA/mois\n- Groupement: Partage matière première (économies 20%)\n### 3. Textile et confection\n- Pagne coloré: Tradition + modernité (vêtements mode)\n- Partenaires: Tisserands (traditionnels), atelier confection\n- Marge intermédiaire: 30-50% selon circuit\n- Défi: Compétition chinois (pagnes bas prix)\n### 4. Fournitures scolaires et papeterie\n- Demande régulière (rentrée, année scolaire)\n- Point de revente livres, cahiers, stylos\n- Capital initial faible: 50,000-100,000 FCFA\n- Marges: 15-25%\n## Financement et épargne\n### Tontines (groupes d'épargne rotatifs)\n- Participation: 2,000-10,000 FCFA/mois (selon groupe)\n- Accès au crédit sans intérêt quand vient le tour (3-12 mois après adhésion)\n- Avantage: Discipline épargne, confiance mutuelle, pas intermédiaire bancaire",
+      "chunkIndex": 1,
+      "embeddingDimensions": 98
+    },
+    {
+      "id": "entrepreneuriat-femmes-inclusion-financiere.md-chunk-2",
+      "sourceFile": "entrepreneuriat-femmes-inclusion-financiere.md",
+      "title": "entrepreneuriat-femmes-inclusion-financiere.md",
+      "region": "UNKNOWN",
+      "credibilityTier": "low",
+      "content": "- Limitation: Montants modestes, pas pour investissements importants\n### Institutions de microfinance (IMF)\n- Crédit groupe solidaire: 100,000-1,000,000 FCFA\n- Taux intérêt: 18-36% annuel (élevé mais marché risqué)\n- Durée: 6-24 mois remboursement\n- Garantie: Épargne préalable ou groupe garant\n### Banques (difficilement accessibles)\n- Exigent: Documents, témoignages revenus, épargne préalable (15-25% du crédit)\n- Seules femmes formelles/commerçantes accèdent\n- Intérêt: 12-18% (moins cher que IMF)\n## Modèles d'accompagnement réussis\n### Champs-écoles féminins (adaptation FONGS/RECA)\n- Apprentissage collectif (25-30 femmes)\n- Thèmes: Agriculture + transformation + gestion financière\n- Durée: 12-24 mois\n- Résultat: +50% revenu groupe, accès crédit amélioré\n### Mentorat femme-femme\n- Entrepreneur expérimentée guide nouvelle vendeuse\n- Transmission savoir-faire, contacts marché, stratégies prix\n- Durée: 3-6 mois intensif\n- Coût programme: Faible (temps mentor)\n### Coopératives commerciales\n- Groupement 15-50 femmes partageant chaîne production/distribution\n- Economies échelle: -15% coûts approvisionnement\n- Accès meilleur: Crédit groupe, marché gouvernemental",
+      "chunkIndex": 2,
+      "embeddingDimensions": 94
+    },
+    {
+      "id": "entrepreneuriat-femmes-inclusion-financiere.md-chunk-3",
+      "sourceFile": "entrepreneuriat-femmes-inclusion-financiere.md",
+      "title": "entrepreneuriat-femmes-inclusion-financiere.md",
+      "region": "UNKNOWN",
+      "credibilityTier": "low",
+      "content": "- Défis: Gestion associative, conflits revenus\n## Cadre légal et droits\n### Statuts entreprise pour femmes\n- **Micro-entreprise**: Déclaration simple, pas TVA, bien pour ≤5M FCFA chiffre\n- **SARL/SNC**: Immatriculation tribunal, comptabilité obligatoire, accès crédit banquaire\n### Droits fonciers\n- Loi: Égalité achat/location terre (théorie)\n- Pratique: Homme nom officiel souvent, contrats informels\n- Solution: Associations femmes co-détention, contrats écrits avec maire témoin\n## Connexion avec Problem to Project Africa\nUne femme identifie problème (ex: transformation aliment chronophage) →\nProjet (fabrique coopérative savon) →\nRessources: Tontine locale + crédit IMF + formation INERA/NGO →\nRevenu famille + 4-5 autres femmes",
+      "chunkIndex": 3,
+      "embeddingDimensions": 72
+    },
+    {
+      "id": "genre-femmes-droits.md-chunk-0",
+      "sourceFile": "genre-femmes-droits.md",
+      "title": "genre-femmes-droits.md",
+      "region": "UNKNOWN",
+      "credibilityTier": "low",
+      "content": "---\ntitle: \"Genre, Femmes et Protection des Droits\"\nsourceType: \"ngo\"\nregion: \"BF,ML,SN,CI,GH,NG,KE,UG,ET,RW,TZ,CM\"\ncredibilityTier: \"high\"\n---\n# Genre, Femmes et Protection des Droits en Afrique\n## 1. Autonomisation économique femmes\n### Participation main-d'œuvre\n- Taux emploi: 45-55% femmes (vs 75-85% hommes)\n- Secteurs: Agriculture 50%, commerce petite-échelle 35%, salarial 15%\n- Salaires: 30-40% moins hommes même travail\n- Sous-emploi: 25-35% femmes part-time/casual work\n### Obstacles entrepreneuriat femmes\n- Capital accès: 15-20% femmes obtiennent crédit formel\n- Collateral: 85% femmes sans guarantee foncière\n- Formation: 40% femmes entrepreneur manquent skills\n- Temps disponible: Travaux ménage 5-8h/jour reduce production\n### Succès modèles women business\n- Groupes femmes: 5-50 personnes, capital pooling tontines\n- Secteurs viables: Transformation aliments, textiles, services\n- Fintech: Mobile money accès improved 3x par 5 ans\n- Microcrédit: 10-15% clients femmes, taux remboursement 95%+\n### Revenus impacts\n- Income femmes: Household spending education +40% vs men control\n- Autonomy: Revenue own = decision-making power increase",
+      "chunkIndex": 0,
+      "embeddingDimensions": 90
+    },
+    {
+      "id": "genre-femmes-droits.md-chunk-1",
+      "sourceFile": "genre-femmes-droits.md",
+      "title": "genre-femmes-droits.md",
+      "region": "UNKNOWN",
+      "credibilityTier": "low",
+      "content": "- Investissement enfants: Femmes priorité education daughters\n- Épargne: Women groups accumule capital +200% 3 years\n## 2. Violence based on gender\n### Prévalence troubling\n- Violences intimes: 30-50% femmes lifetime physical/sexual\n- Enfants mariage: 30-40% filles <18 ans zones rurales\n- Harcèlement sexuel: 60-80% femmes public spaces report\n- Féminicide: 3-5 morts 100k femmes rates zones conflict\n### Impacts santé reproductive\n- Grossesses forcées: Issues health complications maternal\n- IST transmissions: Violence associated+60% infections\n- Avortements: 40% forced terminations post-violence episodes\n- Trauma psych: PTSD, depression 40-60% abuse survivors\n### Justice system gaps\n- Poursuites: 5-10% violence cases reach police\n- Convictions: 1-3% cases convicted (faible de reports)\n- Délais: 2-5 years justice proceedings exhausting\n- Impunité: Societal normalization, weak enforcement\n### Interventions probantes\n- Crisis centers: Hotlines 500-2,000 calls/month croissance\n- Legal aid: Gratuit services increased access 10x\n- Shelters: Limited 20-50 places networks, high demand\n- Community education: Men engagement 40% reduction violence zones cibles",
+      "chunkIndex": 1,
+      "embeddingDimensions": 109
+    },
+    {
+      "id": "genre-femmes-droits.md-chunk-2",
+      "sourceFile": "genre-femmes-droits.md",
+      "title": "genre-femmes-droits.md",
+      "region": "UNKNOWN",
+      "credibilityTier": "low",
+      "content": "## 3. Santé reproductive + maternelle\n### Planification familiale uptake\n- Méthodes modernes: 20-30% women using contraception\n- Injectables: Marché prédominant 35-40% utilisateurs\n- PIU/stérilet: <5% uptake despite effectiveness\n- Connaissances gaps: 40-50% women ignorent options\n### Accouchements assistance\n- Assistance qualifiée: 60% urban vs 35% rural births\n- Complications: 15-20% births need intervention\n- Décès maternels: 300-600 per 100k live births Africa\n- Post-partum care: 30-40% women no follow-up 6 weeks\n### Allaitement support\n- Initiation: 80-90% first 1 hour (encouragement amélioration)\n- Durée exclusive: 40-50% 6 months (sous-objectif 50%+)\n- Support groups: 20% zones accessibilité, impact +5%\n- Employment: Travail impacte allaitement, policies manquent\n### Santé mentale périnatal\n- Dépression postpartum: 10-15% women affected\n- Psychosis: <1% incidence rare serious\n- Support limited: <5% women reçoivent mental health care\n- Integration health services: Screening 30% facilities seulement\n## 4. Droits fonciers femmes\n### Propriété disparité\n- Ownership: 10-20% femmes seules terre title",
+      "chunkIndex": 2,
+      "embeddingDimensions": 93
+    },
+    {
+      "id": "genre-femmes-droits.md-chunk-3",
+      "sourceFile": "genre-femmes-droits.md",
+      "title": "genre-femmes-droits.md",
+      "region": "UNKNOWN",
+      "credibilityTier": "low",
+      "content": "- Access: 50% femmes access par family members\n- Succession: Veuves excluded 70% cas property post-mort\n### Réformes légales\n- Lois égalité: 35+ countries have updated inheritance laws\n- Implementation gaps: Application 30-50% seulement\n- Awareness: 40% femmes ignorent droits légaux\n- Contestation: Cultural resistance slows progress\n### Collective land models\n- Women groups: Acquisition collective safer\n- Productivity: Collective farms +30% yields\n- Retention: Security improves post-acquisition\n## 5. Accès services services basiques\n### Éducation\n- Completion primary: 75-80% boys vs 60-65% filles\n- Secondary access: 45% boys vs 30% girls enrollment\n- Obstacles: Cost, distance, domestic responsibilities, marriage\n### Santé\n- Maternity care: 70% women had some prenatal care\n- Infections: STI testing <20% women access\n- Contraception counselling: 30-40% facilities provide\n### Justice\n- Access courts: Limited especially rural areas\n- Customary law: 50-70% justice through traditional leaders\n- Gender-sensitive: Very few courts ensure equity\n---\n**2030 Gender equality targets Africa**:",
+      "chunkIndex": 3,
+      "embeddingDimensions": 97
+    },
+    {
+      "id": "genre-femmes-droits.md-chunk-4",
+      "sourceFile": "genre-femmes-droits.md",
+      "title": "genre-femmes-droits.md",
+      "region": "UNKNOWN",
+      "credibilityTier": "low",
+      "content": "- Economic participation 55% femmes workforce\n- Violence éradication dans lois + enforce\n- Education parity tous niveaux\n- Political representation 50% parmi leaders\n- Reproductive autonomy 75% contraception access",
+      "chunkIndex": 4,
+      "embeddingDimensions": 20
+    },
+    {
+      "id": "gouvernance-locale-burkina.md-chunk-0",
+      "sourceFile": "gouvernance-locale-burkina.md",
+      "title": "gouvernance-locale-burkina.md",
+      "region": "UNKNOWN",
+      "credibilityTier": "low",
+      "content": "---\ntitle: \"Gouvernance locale et leadership communautaire au Burkina Faso\"\nsourceType: \"ngo\"\nregion: \"BF\"\ncredibilityTier: \"high\"\n---\n# Gouvernance et Leadership Communautaire\n## Structures traditionnelles et modernes\nAu Burkina Faso, la gouvernance communautaire combine structures traditionnelles (chefs de village, conseils d'anciens) avec les institutions modernes (maires, collectivités).\n### Le rôle des chefs traditionnels\n- Arbitrage des conflits fonciers et familiaux\n- Légitimité locale forte surtout en zones rurales\n- Pont entre État central et populations\n- Gestion des ressources collectives (eau, pâturages)\n### Les collectivités territoriales\nLes communes disposent de compétences en :\n- Éducation primaire et santé de base\n- Électrification rurale et puits\n- Développement agricole local\n- État civil\n**Défi**: Beaucoup de mairies manquent de ressources financières. Budget moyen d'une commune rurale: 50-150 millions FCFA/an.\n## Participation civique\nLes associations locales (coopératives, groupements de femmes, jeunesse) jouent un rôle croissant:\n- Plaidoyer pour services publics\n- Gestion d'équipements collectifs",
+      "chunkIndex": 0,
+      "embeddingDimensions": 85
+    },
+    {
+      "id": "gouvernance-locale-burkina.md-chunk-1",
+      "sourceFile": "gouvernance-locale-burkina.md",
+      "title": "gouvernance-locale-burkina.md",
+      "region": "UNKNOWN",
+      "credibilityTier": "low",
+      "content": "- Formation agricole et commerciale\n- Épargne villageoise (tontines)\n## Anti-corruption et transparence\nDes initiatives émergentes:\n- Budgets participatifs dans certaines communes\n- Plaintes citoyennes (CODEL - Conseils de Développement Local)\n- Audits citoyens sur stocks de médicaments, fournitures scolaires\nMais obstacles: Faible alphabétisation, mauvaise diffusion de l'information, corruption endémique.\n## Liens avec Problem to Project Africa\nUn porteur de projet local peut:\n1. Identifier un problème validé par la communauté (pas d'eau, école sans tables-bancs)\n2. Le présenter à la mairie / chef de secteur\n3. Solliciter co-financement ou ressources collectives\n4. Mobiliser tontines ou groupements de femmes pour contribution locale",
+      "chunkIndex": 1,
+      "embeddingDimensions": 64
+    },
+    {
+      "id": "gouvernance-sources-africaines.md-chunk-0",
+      "sourceFile": "gouvernance-sources-africaines.md",
+      "title": "gouvernance-sources-africaines.md",
+      "region": "UNKNOWN",
+      "credibilityTier": "low",
+      "content": "---\ntitle: Gouvernance des sources africaines verifiables\nsourceType: reference\nregion: Afrique\ncredibilityTier: high\n---\nUn assistant centre sur les realites africaines doit separer quatre niveaux d'information : source primaire institutionnelle, source terrain ou communautaire documentee, analyse experte, et opinion non verifiee. Les sources primaires incluent les textes publics, registres, statistiques officielles, publications universitaires, rapports d'organisations locales reconnues et entretiens terrain documentes.\nLa reduction des biais ne consiste pas a remplacer un recit occidental par un recit inverse automatique. Elle consiste a rendre visibles les sources, les incertitudes, les contradictions, les angles morts et les conditions locales. Quand une information n'est pas disponible dans le corpus, l'agent doit le dire et proposer une verification : institution locale, expert du secteur, donnees administratives, terrain, archives, ou organisations professionnelles.\nPour un prototype fiable, le corpus local doit garder la trace du type de source, de la region, de la date de collecte, du niveau de confiance, et de la personne ou equipe ayant valide l'extrait. Un score de fiabilite ne remplace pas le jugement humain, mais il aide l'application a eviter de donner le meme poids a une rumeur, un article d'opinion et une source officielle.",
+      "chunkIndex": 0,
+      "embeddingDimensions": 107
+    },
+    {
+      "id": "jeunesse-employabilite.md-chunk-0",
+      "sourceFile": "jeunesse-employabilite.md",
+      "title": "jeunesse-employabilite.md",
+      "region": "UNKNOWN",
+      "credibilityTier": "low",
+      "content": "---\ntitle: \"Jeunesse, Employabilité et Opportunités Économiques\"\nsourceType: \"ngo\"\nregion: \"BF,ML,SN,CI,GH,NG,KE,UG,ET,RW,TZ,CM,ZA\"\ncredibilityTier: \"high\"\n---\n# Jeunesse, Employabilité et Opportunités Économiques\n## 1. Situation jeunesse Africa\n### Démographie\n- Population <35 ans: 60-70% Afrique (vs 30% monde développé)\n- Croissance annuelle: 2.5-3% (vs 0.5% Europe)\n- Urbanisation: 50-60% jeunes dans villes d'ici 2030\n- Migration: 1-2 millions jeunes quittent Africa/an recherche jobs\n### Chômage jeunesse\n- Taux unemployment: 25-35% jeunes 15-24 ans\n- Underemployment: 40-50% part-time/casual work\n- NEET rates: 20-30% jeunes ni école ni emploi\n- Disparités: Filles +10% plus chômage vs garçons\n### Aspirations et réalités\n- Education attainment: 70% completion école primaire vs 40% secondaire\n- Skills gaps: 60% jeunes lacking technical competencies\n- Expectations: 80% want salaried jobs vs 15% capacity\n- Frustration: Unemployment leading emigration +40% attempts\n### Migration jeunesse\n- Intra-African: 1+ millions annuel (Kenya, Côte d'Ivoire destination)\n- International: 500,000+ vers Europe annually\n- Success rates: 20-30% remittances regulier senders",
+      "chunkIndex": 0,
+      "embeddingDimensions": 82
+    },
+    {
+      "id": "jeunesse-employabilite.md-chunk-1",
+      "sourceFile": "jeunesse-employabilite.md",
+      "title": "jeunesse-employabilite.md",
+      "region": "UNKNOWN",
+      "credibilityTier": "low",
+      "content": "- Risks: Human trafficking, exploitation, deportation\n## 2. Formation professionnelle systèmes\n### Éducation technique vocational (TVET)\n- Enrollment: 5-15% secondary population (vs 30-40% goal)\n- Public institutions: Limited funding, outdated equipment\n- Private schools: 50,000+ FCFA/an fees prohibitive\n- Quality variation: 30-50% graduates unemployable\n### Modèles apprentissage réussis\n- Master-apprentice: 2-3 ans, cost 100,000-300,000 FCFA\n- Success rate: 70% become self-employed within 2 years\n- Sectors: Mécanique, électricité, plomberie, construction\n- Revienu post: 120,000-300,000 FCFA/mois\n### Formation en ligne émergentes\n- SMS courses: 30-40% literacy, basic competencies\n- Whatsapp videos: Skill-building 100,000+ followers channels\n- Platforms: Coursera/Udemy translated local languages\n- Cost: $50-200 vs $500,000+ physical schools\n### Recognition credentials\n- Formal certificates: Government recognized 20-30% programs only\n- Digital credentials: Blockchain pilot Kenya/Ghana validation\n- Employer recognition: 50-60% hire based portfolio not diploma\n- Gaps: Skill validation inconsistent industry standards\n## 3. Entrepreneuriat jeunesse\n### Barrières starting business\n- Capital: Difficulty obtaining 150,000-1 millions FCFA startup",
+      "chunkIndex": 1,
+      "embeddingDimensions": 114
+    },
+    {
+      "id": "jeunesse-employabilite.md-chunk-2",
+      "sourceFile": "jeunesse-employabilite.md",
+      "title": "jeunesse-employabilite.md",
+      "region": "UNKNOWN",
+      "credibilityTier": "low",
+      "content": "- Collateral: 90% jeunes manquent guarantee foncière\n- Mentorship: Limited access experienced entrepreneurs\n- Market access: Competition established businesses\n### Successful startup models\n- Digital services: Web design, content creation, $100-500 costs\n- Retail: Phone credit agents, USSD $5,000 inventory\n- Services: Plumbing, cleaning, repair trades $10,000 tools\n- E-commerce: Reselling Alibaba products, $1,000-5,000 capital\n### Fintech access enabling\n- Mobile money: 80% unbanked jeunesse now registered\n- Pay-as-you-go: Services subscription 50,000-10,000 FCFA\n- Digital lending: 1-5 millions borrowers croissance 50%/an\n- Collateral-less: Mobile transaction history replaces assets\n### Startup ecosystem development\n- Accelerators: 20+ programs Africa, 500-2,000 startups/an\n- VC funding: $2+ billions invested 2020s early-stage\n- Tech hubs: 300+ innovation spaces concentration urban\n- Government: Entrepreneurship promotion policies emerging\n## 4. Creative economy opportunities\n### Creative sectors growth\n- Music/entertainment: 30-50% growth/an streaming adoption\n- Gaming: Mobile games 5+ millions players region\n- Design/photography: Freelance platforms 5,000+ earners",
+      "chunkIndex": 2,
+      "embeddingDimensions": 105
+    },
+    {
+      "id": "jeunesse-employabilite.md-chunk-3",
+      "sourceFile": "jeunesse-employabilite.md",
+      "title": "jeunesse-employabilite.md",
+      "region": "UNKNOWN",
+      "credibilityTier": "low",
+      "content": "- Content creation: YouTube, TikTok influencers 10,000+ followers\n### Creator monetization challenges\n- Revenue models: Ad-share 70-80%, sponsorship 20-30%\n- Payment processing: 30-40% friction international transfers\n- Copyright: Piracy 80-90% unauthorized distribution\n- Sustainability: Platform dependency, algorithm changes\n### Creator economy opportunities\n- Local services: Design social media, video editing $50-200\n- Brand partnerships: Influencer deals $1,000-10,000 posts\n- Product creation: Merchandise, digital downloads revenue\n- Training others: Courses teaching skills $500-2,000\n### Media sector employment\n- Traditional media: Jobs limited 5-10% growth\n- Digital platforms: 10,000+ jobs created jobs annually\n- Freelance: 20,000+ active content creators region\n- Growth projection: 50,000+ creative jobs 2030\n## 5. Skill development programs\n### Priority sectors training\n- Green jobs: Solar tech, environmental management\n- Digital: Coding, digital marketing, cybersecurity\n- Healthcare: Nurses, CHWs, lab technicians\n- Construction: Electricians, plumbers, welders\n### Women entrepreneurship programs\n- Training: 5,000+ femmes entrepreneurs/an\n- Finance: 2,000+ womens loans provided",
+      "chunkIndex": 3,
+      "embeddingDimensions": 99
+    },
+    {
+      "id": "jeunesse-employabilite.md-chunk-4",
+      "sourceFile": "jeunesse-employabilite.md",
+      "title": "jeunesse-employabilite.md",
+      "region": "UNKNOWN",
+      "credibilityTier": "low",
+      "content": "- Mentorship: Matching successful entrepreneurs\n- Network: Community support accountability\n### Youth employment programs\n- Government schemes: 100,000+ youth employment/an\n- Private sector: Corporate social responsibility programs\n- NGO: Skills training + job placement services\n- Results: 30-50% employment within 6 months\n### Skills certification\n- Industry-recognized: Frameworks under development\n- Stackable credentials: Short courses combinable qualifications\n- Micro-credentials: Bite-size competencies\n- Recognition gaps: Need employer alignment\n## 6. Inclusive economic participation\n### Youth excluded populations\n- Refugees: 200,000+ youth camps limited opportunity\n- Disabled: 15-20% employment rate vs 30% average\n- Rural: Limited access training + jobs\n- LGBTQ+: Discrimination reducing opportunity participation\n### Inclusion interventions\n- Scholarships: Targeting disadvantaged youth\n- Transport subsidies: Access training centers\n- Mentorship: Peer support programs\n- Accessibility: Online training + assistive tech\n### Monitoring impact\n- Employment tracking: 6-12 month follow-ups\n- Income changes: Baseline vs post-training earnings\n- Retention: Job stability 12+ months",
+      "chunkIndex": 4,
+      "embeddingDimensions": 95
+    },
+    {
+      "id": "jeunesse-employabilite.md-chunk-5",
+      "sourceFile": "jeunesse-employabilite.md",
+      "title": "jeunesse-employabilite.md",
+      "region": "UNKNOWN",
+      "credibilityTier": "low",
+      "content": "- Satisfaction: Quality employment measures\n---\n**2030 Youth employment vision Africa**:\n- 50+ millions new jobs created\n- 80% youth have basic digital skills\n- Unemployment rate <15% vs current 25-35%\n- 30% youth entrepreneurs/self-employed\n- Creative economy valeur $100+ billions",
+      "chunkIndex": 5,
+      "embeddingDimensions": 27
+    },
+    {
+      "id": "numerique-innovation-afrique.md-chunk-0",
+      "sourceFile": "numerique-innovation-afrique.md",
+      "title": "numerique-innovation-afrique.md",
+      "region": "UNKNOWN",
+      "credibilityTier": "low",
+      "content": "---\ntitle: \"Numérique et innovation en Afrique: barrières et opportunités\"\nsourceType: \"ngo\"\nregion: \"BF\"\ncredibilityTier: \"medium\"\n---\n# Numérique et Innovation\n## État des lieux Afrique de l'Ouest\n### Infrastructure de base\n- **Couverture 4G Burkina**: ~65% population urbaine, <20% zones rurales\n- **Accès internet**: 27% population (vs 62% mondiale), majorité via mobile\n- **Coût données**: 1GB ≈ 1,500-2,500 FCFA (≈ 3-5% salaire minimum)\n- **Électricité**: 63% accès, intermittent surtout zones rurales\n### Téléphones mobiles\n- Pénétration: ~90% population (majorité smartphones 2020s)\n- Operateurs dominants: Orange, Moov, Zain\n- Paiement mobile: 65%+ utilisateurs ont portefeuille mobile (Orange Money, Moov Money)\n## Opportunités numériques par secteur\n### Agriculture digitale\n- **Météo SMS**: Prévisions pluie/tempête gratuit via INERA/Météo\n- **Conseils texte**: Partenaires ICRISAT/CGIAR envoient fiches techn. agricoles whatsapp\n- **Prix marché en temps réel**: Apps \"Akofarm\", \"Esoko\" informent prix locaux\n- **Paiement récolte**: Acheteurs paiement mobile facile (moins risque vol espèces)\n### Commerce et marketing",
+      "chunkIndex": 0,
+      "embeddingDimensions": 91
+    },
+    {
+      "id": "numerique-innovation-afrique.md-chunk-1",
+      "sourceFile": "numerique-innovation-afrique.md",
+      "title": "numerique-innovation-afrique.md",
+      "region": "UNKNOWN",
+      "credibilityTier": "low",
+      "content": "- **Réseaux sociaux**: Facebook/WhatsApp marketing produits, 35% transactions PME via appels/messages\n- **Plateformes vente**: \"Jumia\", \"Afrimarket\" connectent vendeurs-acheteurs (majorité urbain)\n- **Point-of-sale mobile**: Terminal portable accepte paiement mobile, +15% petit commerce Ouagadougou\n### Éducation et formation\n- **Cours en ligne**: Udemy, Coursera accessible mais coût data élevé (YouTube offline existent)\n- **SMS éducation**: Programmes santé (planification familiale), agronomie via texte\n- **Vidéos whatsapp**: Transmission savoir-faire (agriculture, savon) entre pairs informel\n## Barrières et solutions\n| Barrière | Impact | Solution locale |\n| --- | --- | --- |\n| Faible alphabétisation | Difficile utiliser apps complexes | Apps icônes, vidéos courtes |\n| Coût données élevé | Rupture accès régulier | Wifi communautaire, whatsapp offline |\n| Électricité intermittente | Perte données, frustration | Panneaux solaires, batterie portable |\n| Langue (apps anglais/français standard) | Non-compréhension | Versions langues locales (mooré, dioula) |\n| Pas numéro ID/documents | Exclusion services fintech | Identification biométrique mobile émergent |",
+      "chunkIndex": 1,
+      "embeddingDimensions": 107
+    },
+    {
+      "id": "numerique-innovation-afrique.md-chunk-2",
+      "sourceFile": "numerique-innovation-afrique.md",
+      "title": "numerique-innovation-afrique.md",
+      "region": "UNKNOWN",
+      "credibilityTier": "low",
+      "content": "## Acteurs clés\n### Gouvernemental\n- **ARCEP**: Autorité régulation télécom, encourage concurrence, baisse tarifs\n- **Ministère Numérique**: Agenda 2025 (ID numérique, e-services, 4G zones rurales)\n### Privé\n- **Opérateurs télécom**: Orange, Moov investissent agrisation, fintech\n- **Startups locales**: Jumia, Wave (paiement), EartHub (agriculture) émergent\n### ONG/Coopération\n- **RECA**: Plateforme paysans, intégration SMS prix marché\n- **d.light/M-PESA modèles**: Fintech paiement, épargne, micro-assurance\n## Initiatives prometteuses\n### Portails paysans (RECA, FONGS)\n- Centre communautaire avec ordiateur + internet + formateur\n- Paysans accèdent: Cours vidéo, prix marché, crédit info\n- Coût: 1,000-5,000 FCFA/inscription annuelle\n- Impact: +20% prix vente (meilleur timing), -15% coûts achat (intrants groupés)\n### Paiement mobile pour vente récolte\n- Acheteur agrégateur envoie fonds Moov Money/Orange Money directement producteur\n- Évite: Transport espèces (risque), perte change (meilleur taux mobile)\n- Adoption: +40% chez producteurs niébé/arachide (étude 2023)\n### Formation en ligne partagée (tontine numérique)\n- Groupe femmes contribution 5,000 FCFA/mois pour forfait internet + cours e-learning",
+      "chunkIndex": 2,
+      "embeddingDimensions": 108
+    },
+    {
+      "id": "numerique-innovation-afrique.md-chunk-3",
+      "sourceFile": "numerique-innovation-afrique.md",
+      "title": "numerique-innovation-afrique.md",
+      "region": "UNKNOWN",
+      "credibilityTier": "low",
+      "content": "- Accès formation via smartphone partagé (une à deux appart groupe)\n- Exemple: Certification \"Entrepeneur digital\" 3 mois (plateforme Coursera)\n## Risques et éthique\n### Escroqueries émergentes\n- Faux conseils agriculture + contrats mirages\n- Perte confiance numérique\n- Solution: Plateforme vérifiée (ONG labels partenaires) + porte-parole locaux\n### Dépendance données étrangères\n- Serveurs payants hors-Afrique (latence, coûts, souveraineté)\n- Émergence: Datacenters régionaux (exemple Google Kinshasa 2024)\n### Surveillance et données personnelles\n- Régulation: RGPD équivalent Afrique inexistant plupart pays\n- Recommandation: Transparence collecte data avant consentement utilisateurs",
+      "chunkIndex": 3,
+      "embeddingDimensions": 66
+    },
+    {
+      "id": "peche-aquaculture-ressources-marines.md-chunk-0",
+      "sourceFile": "peche-aquaculture-ressources-marines.md",
+      "title": "peche-aquaculture-ressources-marines.md",
+      "region": "UNKNOWN",
+      "credibilityTier": "low",
+      "content": "---\ntitle: \"Pêche, Aquaculture et Ressources Marines\"\nsourceType: \"community\"\nregion: \"SN,CI,GH,NG,KE,TZ,MZ,ZA\"\ncredibilityTier: \"high\"\n---\n# Pêche, Aquaculture et Ressources Marines en Afrique\n## 1. Pêche artisanale côtière\n### Situation actuelle\n- Pêcheurs artisanaux: 12 millions Afrique, 85% emploi pêche\n- Revenus: 100,000-300,000 FCFA/mois (vs agriculture 40,000-80,000)\n- Embarcations: Pirogues bois + filets traditionnels ou moteur 15-40hp\n- Saisons: Variabilité hausse 30% volatilité revenu (El Niño impacts)\n### Défis structurels\n- Surpêche côtière: Stocks baissent 15-20% décennie\n- Accès marché: Intermédiaires prennent 60-70% valeur vente\n- Prix volatilité: 3,000-8,000 FCFA/kg poisson frais (spécies variation)\n- Infrastructure: Ports artisanaux limités, glaces manquent 40% endroits\n### Prise journalière productive\n- Captures varient: 5-50 kg/jour selon saison (moyenne 15-20 kg)\n- Espèces cibles: Poisson blanc, thon côtier, crevettes, poulpe\n- Coûts opération: Carburant $10-20, entretien bateau $100-300/mois\n- Profit net: $3-8/jour moyenne (variable énormément)\n### Post-capture losses\n- Spoilage: 30-40% prises gâtées faute glace/stockage",
+      "chunkIndex": 0,
+      "embeddingDimensions": 97
+    },
+    {
+      "id": "peche-aquaculture-ressources-marines.md-chunk-1",
+      "sourceFile": "peche-aquaculture-ressources-marines.md",
+      "title": "peche-aquaculture-ressources-marines.md",
+      "region": "UNKNOWN",
+      "credibilityTier": "low",
+      "content": "- Fumage traditionnel: Efficace mais perte nutritionnelle, coûts bois énormes\n- Traitement: 5% seulement prises transform localement\n- Infrastructure cold-chain: Inexistante ou très basique zones côtes\n## 2. Traitement et valeur-ajoutée poisson\n### Fumage traditionnel\n- Processus: Poisson salé séché feu bois, 10-15 jours durée\n- Rendement: 60-70% poids final (eau perdue)\n- Qualité: Bois dure = moins saveur, perte vitamine A\n- Revenus: Marchande fumage gagne 2x prix poisson frais\n### Séchage solaire amélioré\n- Séchoirs solaires: Tentes plastique, accélèrent 50%, qualité meilleure\n- Coûts: 50,000-150,000 FCFA construction durable\n- Hygiène: Réduit contamination insectes/poussière 90%\n- Adoption: Lente, femmes parfois résistent changement habitudes\n### Transformation secondaire\n- Soupe/poudre poisson: Richesse protéines, marché croissant\n- Condiments: Huile, paste, sauce poisson produits valeur élevée\n- Collagen/colla poisson: Marché cosmétique émergent\n- Revenus: Transformation +200-300% vs vente brut\n### Chaines valeur modern\n- Coopératives: 50-200 femmes, achat groupé glace, vente transformation\n- Certification: \"Slow fish\" labels, marché premium segment boutique",
+      "chunkIndex": 1,
+      "embeddingDimensions": 106
+    },
+    {
+      "id": "peche-aquaculture-ressources-marines.md-chunk-2",
+      "sourceFile": "peche-aquaculture-ressources-marines.md",
+      "title": "peche-aquaculture-ressources-marines.md",
+      "region": "UNKNOWN",
+      "credibilityTier": "low",
+      "content": "- Export régional: Sénégal→Côte d'Ivoire, prix douze 2x local\n- Traçabilité: Mobile apps suivi provenance, acceptation croissante\n## 3. Aquaculture continentale\n### Petits étangs piscicoles\n- Espèces: Tilapia, carpe, silure adaptées warm water\n- Tailles étangs: 100-500m² exploitations familiales\n- Production: 5-10 tonnes/hectare/an potentiel\n- Temps cycle: 6-9 mois jusqu'à récolte\n### Feeding aquaculture\n- Aliment naturel: Algues, insectes, déchets matière organique\n- Aliment commercial: 2,000-3,000 FCFA/sac 50kg, coûts operation significatif\n- Feed conversion: 2-2.5kg feed pour 1 kg poisson (vs cattle 6kg)\n- Source locale: Farine cassava, maïs, levure beer = formules low-cost\n### Rentabilité étang\n- Investissement initial: 200,000-1 million FCFA préparation\n- Coûts annuels: 100,000-400,000 FCFA (alimentation, maintenance)\n- Production annuelle: 1-5 tonnes par étang (variable inputs)\n- Revenus: 1.5-3 millions FCFA/an (prix vente 1,000-2,000 FCFA/kg)\n- ROI: 2-4 ans break-even\n### Systèmes intégrés agriculture-aquaculture\n- Synergie: Poisson en étang, effluents fertilisent cultures\n- Production cumulative: Poisson + légumes + cultures augmentent 50%",
+      "chunkIndex": 2,
+      "embeddingDimensions": 104
+    },
+    {
+      "id": "peche-aquaculture-ressources-marines.md-chunk-3",
+      "sourceFile": "peche-aquaculture-ressources-marines.md",
+      "title": "peche-aquaculture-ressources-marines.md",
+      "region": "UNKNOWN",
+      "credibilityTier": "low",
+      "content": "- Efficience eau: Réduction 30% vs monoculture eau\n- Adoption: 10-15% exploitations aquaculture zones focus\n## 4. Ressources marines gestion durable\n### Biologie stocks marins\n- Migration: Espèces commercial migratrices, chevauchement zones côtières\n- Reproduction: Stocks vulnerable saison frai (mai-septembre Africa ouest)\n- Écosystème: Mangroves critiques nursery poisson (50% espèces commercial)\n- Climat: Changement courant, profondeur thermocline déplace +5-10m\n### Mesures gouvernance pêche\n- Saisons fermées: 2-4 mois reproduction, compliance variable (50-70%)\n- Engins interdits: Filets monofilament, dynamite pêche banned mais persistent\n- Zones protégées: 3-8% zones côtières MPA, efficacité dépend patrouille\n- Licences système: Difficile implanter zones informelles\n### Co-gestion communautaire\n- Comités pêche locaux: 15-30 pêcheurs décident règles\n- Règlements locale: Tailles minimales, saisons closes, engins acceptés\n- Enforcement: Amendes sociales (réputation) plus efficace que fines state\n- Succès: 30-40% stocks stables zones co-gestion bien organisées\n### Impacts conservation\n- Habitats protégés: Mangroves reboisement, crevettes larves +40%\n- Stock resilience: Zones fermées 2-3 ans production +60% après",
+      "chunkIndex": 3,
+      "embeddingDimensions": 103
+    },
+    {
+      "id": "peche-aquaculture-ressources-marines.md-chunk-4",
+      "sourceFile": "peche-aquaculture-ressources-marines.md",
+      "title": "peche-aquaculture-ressources-marines.md",
+      "region": "UNKNOWN",
+      "credibilityTier": "low",
+      "content": "- Revenus durables: Catch stable long-terme, oscillation diminuée\n- Génération future: Pêcheurs jeunes rester si stocks maintiennent\n---\n**Vision pêche durable Africa**:\n- Stocks maintenus: Catch stable 10+ ans\n- Revenus pêcheurs: Augmentation 50% 2030\n- Emploi femmes: Transformation +100,000 jobs\n- Environnement: Mangroves protection, biodiversité marine",
+      "chunkIndex": 4,
+      "embeddingDimensions": 34
+    },
+    {
+      "id": "sante-education-afrique-ouest.md-chunk-0",
+      "sourceFile": "sante-education-afrique-ouest.md",
+      "title": "sante-education-afrique-ouest.md",
+      "region": "UNKNOWN",
+      "credibilityTier": "low",
+      "content": "---\ntitle: \"Santé et Éducation en Afrique de l'Ouest\"\nsourceType: \"ngo\"\nregion: \"BF,ML,SN,CI,GH,NG\"\ncredibilityTier: \"high\"\n---\n# Santé et Éducation en Afrique de l'Ouest\n## 1. Accès aux services de santé\n### Défis actuels\n- Densité médicale très faible: 1-5 médecins pour 10,000 habitants\n- Coût des consultations: 3,000-8,000 FCFA ($5-13 USD) prohibitif pour 70% populations\n- Distance aux cliniques: 20-50 km moyenne zone rurale\n- Stock médicaments: Ruptures fréquentes anti-malaria, antibiotiques\n- Urgences obstétriques: Mortalité maternelle 400-600 pour 100,000 naissances\n### Solutions émergentes\n- **Santé mobile**: Cadre paramédicaux sur motos, interventions basiques\n- **Appareils bas-coût**: Glucomètres, tensiomètres disponibles $2-5\n- **Groupes de santé**: Associations villageoises gérant petite clinique\n- **Télémédicine SMS**: Consultations texte avec médecins (pilot Senegal)\n- **Assurance communautaire**: Cotisations ~500 FCFA/an couvrant consultations\n### Taux vaccination\n- Polio: 85% couverture nationale vs 95%+ objectif\n- Rougeole: 75-80% première dose, 60% rappel\n- Paludisme: 45% enfants sous moustiquaire traitée",
+      "chunkIndex": 0,
+      "embeddingDimensions": 91
+    },
+    {
+      "id": "sante-education-afrique-ouest.md-chunk-1",
+      "sourceFile": "sante-education-afrique-ouest.md",
+      "title": "sante-education-afrique-ouest.md",
+      "region": "UNKNOWN",
+      "credibilityTier": "low",
+      "content": "- Fièvre jaune: 70% en zones haute transmission\n### Santé maternelle\n- Accouchements assistés: 60% zones urbaines, 35% zones rurales\n- Grossesses précoces: 30% filles mariées avant 18 ans\n- Complications post-partum: Accès limité césariennes d'urgence\n- PF uptake: 20-30% femmes utilisent contraceptifs modernes\n## 2. Éducation primaire & secondaire\n### Infrastructure\n- Classes surpeuplées: 60-80 élèves par classe vs 40 optimal\n- Taux redoublement: 10-15% annuel, coûts familiaux énormes\n- Enseignants: 30% sans formation pédagogique complète\n- Matériel scolaire: Manque cahiers, crayons, tableaux en 40% écoles\n- Bâtiments: 25% écoles tôle ondulée sans électricité\n### Accès & équité\n- Taux scolarisation primaire: 75% garçons, 65% filles\n- Taux brut secondaire: 45% zones urbaines, 20% zones rurales\n- Abandon scolaire: 15% primaire, 25% secondaire (travaux champs, mariage filles)\n- Coûts directs: 15,000-30,000 FCFA/an ($25-50) prohibitif pour 40% familles\n- Frais cachés: Tenues, manuels, cantine = 50% budget éducation famille\n### Qualité apprentissage",
+      "chunkIndex": 1,
+      "embeddingDimensions": 81
+    },
+    {
+      "id": "sante-education-afrique-ouest.md-chunk-2",
+      "sourceFile": "sante-education-afrique-ouest.md",
+      "title": "sante-education-afrique-ouest.md",
+      "region": "UNKNOWN",
+      "credibilityTier": "low",
+      "content": "- Taux d'alphabétisme: 40-55% adultes (65% hommes, 35% femmes)\n- Compétences: 60% élèves fin primaire ne savent pas lire couramment\n- Mathématiques: 45% élèves maîtrisent fractions simples\n- STEM: Carences critiques sciences, peu accès labs\n### Modèles innovants\n- **Écoles satellite**: Classes succursales villages proches, transport élèves\n- **Écoles bilingues**: Français + langue locale (mooré, dioula, bambara)\n- **Enseignants communautaires**: Recrutement local, salaires communautaires\n- **Fournitures low-cost**: Matériel DIY (tableaux peinture, crayons naturels)\n- **Repas scolaires**: Augmente fréquentation +15%, utilise produits locaux\n- **Bourses au mérite**: Identification talents jeunes, sponsorship études avancées\n## 3. Formation professionnelle\n### Secteurs prioritaires\n- Mécanique auto: Forte demande, revenu 150,000-300,000 FCFA/mois\n- Électricité bâtiment: Croissance 20% annuelle, manque techs\n- Plomberie/sanitaire: Marché stable, prix factures 50,000-100,000 FCFA\n- Coiffure/beauté: Accès capital faible, rentable 100,000-200,000 FCFA/mois\n- Cuisine/restauration: Écoles locales, demande restaurants, petits hôtels\n- Menuiserie: Matières premières locales, marché construction boom\n### Modèles réussis",
+      "chunkIndex": 2,
+      "embeddingDimensions": 114
+    },
+    {
+      "id": "sante-education-afrique-ouest.md-chunk-3",
+      "sourceFile": "sante-education-afrique-ouest.md",
+      "title": "sante-education-afrique-ouest.md",
+      "region": "UNKNOWN",
+      "credibilityTier": "low",
+      "content": "- **Master-apprentice**: 2 ans, apprenti paie mentor 100,000-200,000 FCFA, puis indépendant\n- **Écoles techniques**: Publiques peu funded; privées coûtent 1-2 millions FCFA\n- **Centres multirefs**: Regroupent 5-10 métiers, mutualisent équipement\n- **Formation à distance**: SMS/WhatsApp cours, certification finale\n### Taux insertion\n- 70% apprentis deviennent indépendants dans 2 ans\n- 25% deviennent employés PME\n- Revenu moyen après 2 ans: 120,000-200,000 FCFA/mois\n- Satisfaction: 85% apprentis-entrepreneurs content rémunération\n## 4. Santé nutrition enfants\n### Malnutrition chronique\n- 30-40% enfants <5 ans chroniquement malnutris (petite taille)\n- Pic saison: Mai-Septembre avant récoltes\n- Causes: Alimentation insuffisante, infections parasitaires, eau impure\n- Conséquences: QI réduit 10-15 points, capacité travail diminuée\n### Diversification alimentaire\n- Consommation: 85% enfants <2 ans mangent monodiètes (riz/mil)\n- Fruits/légumes: Saison seulement, coûts triples hors-saison\n- Protéines: Oeuf ~200 FCFA, viande 2,000-3,000 FCFA/kg limité accès\n- Fortification: Farine enrichie peu disponible, prix +20%\n### Supplémentation effective\n- Fer: Prophylaxie réduit anémie 30→10%",
+      "chunkIndex": 3,
+      "embeddingDimensions": 105
+    },
+    {
+      "id": "sante-education-afrique-ouest.md-chunk-4",
+      "sourceFile": "sante-education-afrique-ouest.md",
+      "title": "sante-education-afrique-ouest.md",
+      "region": "UNKNOWN",
+      "credibilityTier": "low",
+      "content": "- Zinc: Réduit infections 25%, coûts $0.05/enfant/an\n- Vitamine A: 2 doses annuelles préviennent cécité\n- Taux couverture: 60-75% zones urbaines, 40% zones rurales\n### Allaitement maternel\n- Taux exclusif 0-6 mois: 40-50% (objectif 50%+)\n- Durée moyenne: 18-20 mois vs 24 idéal\n- Sevrage approprié: 35% mères savent diversification 6 mois\n- Groupes support mères: Croissance lente, utilité prouvée +5% durée allaitement\n## 5. Santé mentale & bien-être\n### Prévalence troubles\n- Dépression: 8-12% population, diagnostique très rare\n- Anxiété chronique: 15-20% surtout femmes urbaines\n- Stress post-traumatique: Zones conflit 15-25%, déplacés 30-40%\n- Suicide: Taux 4-6 pour 100,000, pointe 15-24 ans\n### Barrières au soin\n- Stigmatisation: Maladie mentale = \"folie\", famille cache\n- Coûts: Psychiatres privés 50,000+ FCFA/séance\n- Ressources: 1-5 psys pour millions habitants\n- Contexte culturel: Préférences guérisseurs traditionnel\n### Approches validées\n- **Counseling pairs**: Pairs entraînés reconnaissent dépressions, soutien émotionnel\n- **Groupes support**: Femmes veuves/traumatisées, partage + empowerment",
+      "chunkIndex": 4,
+      "embeddingDimensions": 92
+    },
+    {
+      "id": "sante-education-afrique-ouest.md-chunk-5",
+      "sourceFile": "sante-education-afrique-ouest.md",
+      "title": "sante-education-afrique-ouest.md",
+      "region": "UNKNOWN",
+      "credibilityTier": "low",
+      "content": "- **Apps mobiles**: Méditation, gestion stress, gratuit accès\n- **Formation infirmiers**: Détection basique + premiers soins psychologiques\n## 6. Éducation sexuelle & reproductive\n### Besoins urgents\n- Grossesses 15-19 ans: 80-120 pour 1,000 (vs 45 moyenne mondiale)\n- IST: Prévalence chlamydia 8-12%, syphilis 2-4%, peu dépistage\n- Avortements non-sûrs: 45% tous avortements, 30% complications graves\n- VIH: Prévalence 1.5-3% zones urbaines, transmission verticale 20% sans traitement\n### Accès contraception\n- Méthodes modernes: PIU/stérilet seulement 5-8% utilisation\n- Injectables: 35% utilisatrices PF, 3 mois, prix 2,000-3,000 FCFA\n- Pilule: Coûts 500-800 FCFA/mois, discontinuité fréquente\n- Stérilisation: 3-5% seulement, tabou cultural\n### Information qualité\n- Curriculum scolaire: 40% écoles non-enseignent santé reproductive\n- Jeunes cliniques: 20% zones urbaines avec staff entraîné\n- Hotlines: Pilot Senegal 500-1,000 appels/mois, anonyme préféré\n- Misinformation: 60% filles reçoivent info fausse (mythes contraception)\n---\n**État cible v1.0**:\n- Accès santé universelle 2km rayon\n- Éducation primaire 100% énrollment",
+      "chunkIndex": 5,
+      "embeddingDimensions": 95
+    },
+    {
+      "id": "sante-education-afrique-ouest.md-chunk-6",
+      "sourceFile": "sante-education-afrique-ouest.md",
+      "title": "sante-education-afrique-ouest.md",
+      "region": "UNKNOWN",
+      "credibilityTier": "low",
+      "content": "- Formation pro accessibilité 50% jeunes\n- Santé mentale reconnaissance normalisée",
+      "chunkIndex": 6,
+      "embeddingDimensions": 8
+    },
+    {
+      "id": "transport-logistique-commerce-local.md-chunk-0",
+      "sourceFile": "transport-logistique-commerce-local.md",
+      "title": "transport-logistique-commerce-local.md",
+      "region": "UNKNOWN",
+      "credibilityTier": "low",
+      "content": "---\ntitle: \"Transport, Logistique et Commerce Local\"\nsourceType: \"community\"\nregion: \"BF,ML,SN,CI,GH,NG,KE,UG,ET,RW,TZ,CM\"\ncredibilityTier: \"high\"\n---\n# Transport, Logistique et Commerce Local en Afrique\n## 1. Infrastructure routière transport\n### Réseau routier actuels\n- Routes bitumées: 30-50% réseau principal, rest terre/gravel\n- Coûts transport: 50,000-200,000 FCFA/tonne selon distance\n- Temps trajet: 3-5 heures 100km zone rurale (4-5 mph moyenne)\n- Véhicules: Camion vieux 15-25 ans, taux pannes 30-40%\n### Modèles transport disponibles\n- Transports en commun: Bus 50-80 places, horaires informels\n- Camionettes pick-up: 8-12 places passagers, semi-commercial cargo\n- Véhicules deux-roues: Motos taxis 40-60% short-distance\n- Charettes animales: Zone très reculée, coûts bas mais lent\n### Impact commerce rural\n- Accès marché: Produits périssables (fruits/légumes) 50% perte spoilage\n- Timing livraison: Délais imprévisibles, contrats difficiles\n- Coûts transaction: Transport 20-50% prix vente produits agricoles\n- Revenus perdue: Marché accès limité, prix baisse 30-50%\n### Routes économiques principaux\n- Corridors intra-Africa: Dakar-Lagos (3,000km), Cairo-Cape Town",
+      "chunkIndex": 0,
+      "embeddingDimensions": 104
+    },
+    {
+      "id": "transport-logistique-commerce-local.md-chunk-1",
+      "sourceFile": "transport-logistique-commerce-local.md",
+      "title": "transport-logistique-commerce-local.md",
+      "region": "UNKNOWN",
+      "credibilityTier": "low",
+      "content": "- Nodes majeurs: Ports, villes, zones agricoles high-density\n- Commerce transfrontalier: Douanes ralentissent 6-24h passages\n- Informal routes: Petits trajets 10-50km zones locales majoritaires\n## 2. Logistique et stockage\n### Solutions stockage actuels\n- Silos traditionnels: Greniers communautaires, 50-80% capacité useful\n- Stockage hermétique: Sacs plastiques nylons, prévient 70% insectes\n- Entrepôts privés: Zones urbaines seulement, 10,000-50,000 FCFA/mois\n- Température control: Inexistant zones rurales, pertes énormes\n### Technologies low-cost\n- Metal silos: Fabrication locale 500,000-2 millions FCFA, 50 tonnes capacity\n- Cool storage: Chaff storage cool (80% efficacité), coûts $50-200\n- Bags hermétiques: 1,000-2,000 FCFA/sac reutilisable, retention 6+ mois\n- Solar dried storage: Produits préséchés, pertes minimales 5-10%\n### Stockage strategic national\n- Government reserves: 3-6 mois food security stocks\n- Private traders: Speculation timing, stockage spéculatif\n- Farmer groups: Collective storage, leverage vente prix timing\n- Market volatility: Prices double/triple saison sèche (mars-mai)\n## 3. Commerce électronique et digital",
+      "chunkIndex": 1,
+      "embeddingDimensions": 105
+    },
+    {
+      "id": "transport-logistique-commerce-local.md-chunk-2",
+      "sourceFile": "transport-logistique-commerce-local.md",
+      "title": "transport-logistique-commerce-local.md",
+      "region": "UNKNOWN",
+      "credibilityTier": "low",
+      "content": "### Plateformes e-commerce émergentes\n- Facebook marketplace: 60-80% transactions mobiles\n- WhatsApp commerce: Catalogues produits, commandes via chat\n- Jumia/Konga: E-commerce mainstream croissance 30-50%/an\n- Paiement mobile: MTN/Orange money 80% transactions digital\n### Modèles commerce numérique\n- Vendeurs individuels: Phone camera catalogues, direct customer\n- Mini-boutiques virtuelles: 5-50 SKU vendus WhatsApp/Facebook\n- Aggrégateurs local: Collections vendeurs locaux, delivery assurée\n- Marketplace multi-seller: Commission 10-20%, ordre fulfillment\n### Adoption barrières\n- Smartphone accès: 40-60% population rurale has phone\n- Internet coûts: $5-20/GB , 10-20% budget pour 50% zones\n- Literacy numérique: 30-50% populations ignorent navigation apps\n- Payment trust: 20-40% e-paiement distrust, cash préférés\n### Logistique delivery last-mile\n- Coûts: $1-5 delivery rural vs $0.50-2 urban\n- Temps: 2-7 jours rural delivery vs next-day urban\n- Logistics networks: Limited outside 50km principales villes\n- Solutions: Local agents, moto-taxis, community distribution\n## 4. Chaînes de valeur sectoriels\n### Chaîne valeur cacao\n- Producteurs: 2 millions petits fermiers",
+      "chunkIndex": 2,
+      "embeddingDimensions": 99
+    },
+    {
+      "id": "transport-logistique-commerce-local.md-chunk-3",
+      "sourceFile": "transport-logistique-commerce-local.md",
+      "title": "transport-logistique-commerce-local.md",
+      "region": "UNKNOWN",
+      "credibilityTier": "low",
+      "content": "- Rendement: 400-800 kg/hectare (moyen 600 kg)\n- Prix fermier: 1,500-2,500 FCFA/kg (60-70% prix export)\n- Intermédiaires: 3-5 niveaux traders entre fermier + exporter\n### Optimisation chaîne cacao\n- Coopératives: Groupage production, éliminent 1-2 intermediaires\n- Certification: Fair-trade +20% prix premium, volume 5% cacao\n- Direct export: Minimal processing, added value capture +30%\n- Quality improvements: Fermentation control, standardization\n### Autres secteurs chaînes valeur\n- **Noix de cajou**: 12 millions tonnes region, coûts extraction élevés\n- **Niébé (cowpeas)**: Principale protéine, faible valeur-ajout actuel\n- **Arachides**: Oil extraction traditionnel, marché croissant\n- **Shea**: Beurre export valeur élevée, femmes 80% producteurs\n## 5. Commerce inter-pays et régional\n### Echanges intra-Africa\n- Volume: $150+ milliards/an, croissance 15% annuel\n- Commodités: Énergie (pétrole, gaz), métaux, produits agri\n- Manufactured goods: Textiles, véhicules, électronique\n- Services: Telecommunications, banking, logistics\n### Barrières commerciales\n- Tarifs: Moyenne 15-20% tariff rates (très haut vs mondial 3-5%)\n- Non-tariff: Standards, paperwork, corruption délais douane",
+      "chunkIndex": 3,
+      "embeddingDimensions": 110
+    },
+    {
+      "id": "transport-logistique-commerce-local.md-chunk-4",
+      "sourceFile": "transport-logistique-commerce-local.md",
+      "title": "transport-logistique-commerce-local.md",
+      "region": "UNKNOWN",
+      "credibilityTier": "low",
+      "content": "- Change rates: Volatilité limite planification exportateurs\n- Infrastructure ports: Limited capacity, high fees (Tema port Ghana)\n### AfCFTA impacts\n- Marché: 1.3 milliards africains potentiels consumers zone\n- Rules of origin: Transformation locale + valeur add requirements\n- Trade facilitation: Digital customs, single window objectives\n- Growth projections: Commerce intra-Africa +50% 2030 (AfCFTA impact)\n### Succès cross-border commerce\n- Textiles: Nigeria fabrics exportés Senegal/Mali, valeur 2x local\n- Produits finies: Kenya/Egypt appliances regional hubs\n- Agro-processing: Ethiopia coffee exports +50% past 5 years\n- Digital platforms: Ali Baba, Alibaba introducing cross-border logistics\n---\n**Transformation commerce Africa 2030**:\n- Routes improved 60% vs today\n- E-commerce 20% retail transactions\n- Intra-Africa trade doubled\n- Logistics costs reduced 40%\n- Employment 5+ million commerce/logistics jobs",
+      "chunkIndex": 4,
+      "embeddingDimensions": 85
+    }
+  ]
+}

@@ -4,7 +4,7 @@ import "./globals.css";
 export const metadata: Metadata = {
   title: "Agent hybride africain (prototype)",
   description:
-    "Prototype API + RAG local — assistant centré Afrique, réutilisable par Problem to Project Africa.",
+    "Prototype API + RAG local pour un assistant centre Afrique, reutilisable par Problem to Project Africa.",
 };
 
 export default function RootLayout({

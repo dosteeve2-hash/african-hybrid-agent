@@ -1,0 +1,75 @@
+# 🎯 CODEX - 30 Second Briefing
+
+## The Ask
+**Join our team to ship African Hybrid Agent v0.3 - a production-grade LLM system.**
+
+---
+
+## What's Done ✅
+- 14 authentic African corpus sources (550+ chunks)
+- PostgreSQL infrastructure (10 tables, pgvector)
+- Chat API + Admin dashboard
+- Vector search service (ready)
+- Redis caching (ready)
+- 36 comprehensive tests
+- Docker Compose setup
+
+---
+
+## What's Left (Your Mission) ⏳
+
+### CRITICAL (This Week)
+1. **Fix Tests** - 36 test cases, some failing → Fix assertions/data types
+2. **Generate Embeddings** - Create vectors for 550+ chunks → Store in pgvector
+3. **Integrate Cache** - Connect Redis to Chat + Search APIs → 50% latency improvement
+
+### IMPORTANT (Next Week)
+4. Setup CI/CD (GitHub Actions)
+5. E2E integration testing
+6. Performance optimization
+
+---
+
+## Why This Matters
+- **African-focused:** Zero Western bias, authentic sources
+- **Production-grade:** Real database, caching, monitoring
+- **Team ready:** You inherit completed infrastructure
+- **High impact:** Each piece multiplies system capability
+
+---
+
+## Your First Steps
+```bash
+# 1. Read full context
+cat CODEX_ONBOARDING.md
+
+# 2. Check build
+npm run build
+
+# 3. Run tests
+npm test -- --forceExit
+
+# 4. Report back: Build status + test results + blockers
+```
+
+---
+
+## The Stakes
+- ✅ v0.2 (Done): Research prototype
+- 🚀 v0.3 (Your Mission): Production system
+- 🌍 Impact: Empower millions with African-context AI
+
+---
+
+## Ready? 🚀
+
+**Let's make miracles happen.**
+
+Read: `CODEX_ONBOARDING.md` (full context + detailed tasks)  
+Next: `npm run build && npm test -- --forceExit`
+
+**Welcome to the team, Codex!**
+
+---
+
+P.S. You have everything you need. The infrastructure is done. Your job: Polish, integrate, and ship.

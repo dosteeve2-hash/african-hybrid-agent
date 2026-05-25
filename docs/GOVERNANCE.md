@@ -1,29 +1,31 @@
-# Gouvernance des connaissances (agent hybride africain)
+# Gouvernance des connaissances
 
 ## Objectifs
 
-- Réduire la **dépendance aux récits biaisés** (moteurs de recherche, médias lointains) en privilégiant un **corpus versionné** et des métadonnées de confiance.
-- **Séparer** clairement : extraits sources, synthèse modèle, avis utilisateur.
-- **Assumer l’incertitude** : chaque `EvidencePack` inclut `uncertainty` (confiance, raisons).
+- Reduire la dependance aux recits biaises en privilegiant un corpus versionne et des metadonnees de confiance.
+- Separer clairement les extraits sources, la synthese modele et les avis utilisateur.
+- Assumer l'incertitude : chaque `EvidencePack` inclut `uncertainty` avec confiance et raisons.
 
-## Politique de sources (niveaux)
+## Politique de sources
 
-| Niveau `credibilityTier` (fichiers `data/corpus`) | Interprétation |
-|----------------------------------------------------|----------------|
-| `official` | Texte issu ou calqué sur source institutionnelle (à maintenir manuellement) |
-| `high` | ONG reconnue, partenaire, publication validée |
-| `medium` | Notes internes, synthèses de travail |
-| `low` | Rappels méthodologiques, opinions, contenu à contre-vérifier |
+| Niveau `credibilityTier` | Interpretation |
+| --- | --- |
+| `official` | Source institutionnelle maintenue manuellement |
+| `high` | ONG reconnue, partenaire, publication validee |
+| `medium` | Notes internes ou syntheses de travail |
+| `low` | Rappel methodologique, opinion ou contenu a contre-verifier |
 
-Les scores numériques sont des **heuristiques** ; une revue humaine régulière reste nécessaire avant usage juridique ou médical.
+Les scores numeriques sont des heuristiques. Une revue humaine reguliere reste necessaire avant un usage juridique, medical ou financier.
 
-## Anti-biais opérationnels
+## Anti-biais operationnels
 
-- Pas de « vérité » implicite du web sans citation dans une future couche recherche.
-- Refuser ou étiqueter fortement les affirmations sans couverture corpus (voir seuils dans `src/lib/governance/rules.ts`).
-- Documenter les jeux de données : provenance, date d’ingestion, licence.
+- Ne pas traiter le web comme verite implicite.
+- Etiqueter les affirmations sans couverture corpus.
+- Documenter provenance, date d'ingestion, licence et responsable de validation.
+- Garder les contradictions visibles quand plusieurs sources divergent.
 
-## Évolution
+## Evolution
 
-- Whitelist / blacklist par domaine pour une future recherche web contrôlée.
-- Traçabilité des prompts et versions de corpus (voir `docs/DATA_PIPELINE.md`).
+- Whitelist et blacklist de domaines pour une future recherche web controlee.
+- Tracabilite des prompts et versions de corpus.
+- Journal d'audit pour les validations humaines.

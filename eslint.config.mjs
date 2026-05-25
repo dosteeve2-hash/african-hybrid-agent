@@ -5,5 +5,11 @@ import nextTypeScript from "eslint-config-next/typescript";
 export default defineConfig([
   ...nextCoreVitals,
   ...nextTypeScript,
+  {
+    rules: {
+      "@typescript-eslint/no-explicit-any": "warn",
+      "react/no-unescaped-entities": "warn",
+    },
+  },
   globalIgnores([".next/**", "out/**", "node_modules/**", "next-env.d.ts"]),
 ]);

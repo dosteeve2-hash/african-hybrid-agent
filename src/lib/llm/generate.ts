@@ -2,10 +2,7 @@ import type { CorpusChunk } from "@/lib/rag/corpus";
 
 function formatContextBlock(chunks: CorpusChunk[]): string {
   return chunks
-    .map(
-      (c) =>
-        `[${c.id}] (fichier: ${c.sourceFile})\n${c.text}`,
-    )
+    .map((c) => `[${c.id}] (fichier: ${c.sourceFile})\n${c.text}`)
     .join("\n\n---\n\n");
 }
 
@@ -25,7 +22,7 @@ export async function generateOpenAICompatible(params: {
 
   const context =
     params.corpusChunks.length > 0
-      ? `\n\nCONTEXTE (corpus local — à privilégier pour les faits):\n${formatContextBlock(params.corpusChunks)}`
+      ? `\n\nCONTEXTE (corpus local - a privilegier pour les faits):\n${formatContextBlock(params.corpusChunks)}`
       : "";
 
   const messages = [
@@ -43,7 +40,7 @@ export async function generateOpenAICompatible(params: {
     body: JSON.stringify({
       model,
       messages,
-      temperature: 0.4,
+      temperature: 0.35,
     }),
   });
 
@@ -57,7 +54,7 @@ export async function generateOpenAICompatible(params: {
   };
   const text = data.choices?.[0]?.message?.content?.trim();
   if (!text) {
-    throw new Error("Réponse LLM vide.");
+    throw new Error("Reponse LLM vide.");
   }
   return { text };
 }
@@ -67,17 +64,14 @@ export function synthesizeWithoutLLM(
   chunks: CorpusChunk[],
 ): string {
   if (chunks.length === 0) {
-    return `Je n'ai trouvé aucun extrait pertinent dans le corpus local pour : « ${query} ».\n\nAjoute des fichiers .md dans data/corpus avec métadonnées (voir exemple), ou configure OPENAI_API_KEY / Ollama pour élargir la réponse.`;
+    return `Je n'ai trouve aucun extrait pertinent dans le corpus local pour : "${query}".\n\nAjoute des fichiers .md dans data/corpus avec metadonnees (voir exemple), ou configure OPENAI_API_KEY / Ollama pour elargir la reponse.`;
   }
 
   const header =
-    "Réponse prototype **sans modèle de langage externe** — uniquement des extraits du corpus versionné local (à lire comme matière brute, pas comme article fini).\n\n";
+    "Reponse prototype sans modele externe - uniquement des extraits du corpus versionne local. A lire comme matiere brute, pas comme article fini.\n\n";
 
   const body = chunks
-    .map(
-      (c) =>
-        `### [${c.id}] — ${c.sourceFile}\n${c.text}`,
-    )
+    .map((c) => `### [${c.id}] - ${c.sourceFile}\n${c.text}`)
     .join("\n\n");
 
   return `${header}${body}`;

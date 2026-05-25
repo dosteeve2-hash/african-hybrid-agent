@@ -1,29 +1,30 @@
-# Pipeline de données — préparation futur LLM / base africaine
+# Pipeline de donnees
 
-## Étape actuelle (prototype)
+## Etape actuelle
 
-1. **Corpus Markdown** dans `data/corpus/` avec frontmatter YAML (`title`, `sourceType`, `region`, `credibilityTier`).
-2. **Chunking** simple au chargement (`src/lib/rag/corpus.ts`).
-3. **Retrieval** lexical (`src/lib/rag/retrieve.ts`) pour `/api/chat` et `/api/evidence`.
+1. Corpus Markdown dans `data/corpus/` avec frontmatter YAML.
+2. Chunking simple au chargement via `src/lib/rag/corpus.ts`.
+3. Retrieval lexical via `src/lib/rag/retrieve.ts`.
+4. Sorties API : `/api/chat`, `/api/evidence`, `/api/health`.
 
-## Étapes suivantes (roadmap technique)
+## Roadmap technique
 
 | Phase | Action |
-|-------|--------|
-| Ingestion | Scripts pour importer PDF institutionnels → texte brut → Markdown annoté |
-| Qualité | Revue humaine par lot ; labels d’erreurs et de biais |
-| Embeddings | Stockage embeddings + recherche vectorielle (pgvector, LiteLLM, ou service dédié) |
-| Versioning | Git LFS ou registre d’artefacts pour corpus volumineux |
-| Séparation prod | Base dédiée (« data center » logique) avec accès API lecture seule depuis l’agent |
-| Fine-tuning | Uniquement après volume et validation suffisants ; avant ço : RAG + petit modèle |
+| --- | --- |
+| Ingestion | Importer PDF institutionnels, archives locales et notes terrain vers Markdown annote |
+| Qualite | Revue humaine par lot, labels d'erreurs, detection de biais |
+| Embeddings | Ajouter recherche vectorielle avec pgvector ou service dedie |
+| Versioning | Versionner corpus, schemas, prompts et politiques de source |
+| Production | Exposer une API lecture seule pour les apps clientes |
+| Fine-tuning | Lancer seulement apres volume, consentement et validation suffisants |
 
-## Non-objectifs immédiats
+## Non-objectifs immediats
 
-- Entraînement from scratch d’un très grand modèle de langage.
+- Entrainement from scratch d'un tres grand modele.
 - Indexation aveugle du web sans couche de confiance.
 
-## Indicateurs de qualité suggérés
+## Indicateurs
 
-- Couverture par pays / secteur dans le corpus.
-- Part des réponses avec `uncertainty.confidence` au-dessus d’un seuil cible.
-- Taux de citations utilisées dans les réponses finales (P2P + agent).
+- Couverture par pays, secteur, langue et type de source.
+- Part des reponses avec confiance au-dessus du seuil cible.
+- Taux de citations effectivement utilisees dans les reponses.

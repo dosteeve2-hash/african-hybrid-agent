@@ -1,14 +1,14 @@
 ---
-title: Notes opérationnelles — création d'activité au Burkina Faso (prototype)
+title: Notes operationnelles - creation d'activite au Burkina Faso
 sourceType: reference
 region: BF
 credibilityTier: medium
 ---
 
-Ce fichier est un **jeu de données d'amorçage** pour le prototype RAG. Il doit être enrichi avec des textes officiels, des guides sectoriels validés et des sources vérifiables.
+Ce fichier est un jeu de donnees d'amorcage pour le prototype RAG. Il doit etre enrichi avec des textes officiels, des guides sectoriels valides et des sources verifiables.
 
-Formalités fréquentes (à vérifier sur les sites officiels avant toute décision) : immatriculation auprès des autorités compétentes selon la forme juridique, inscription aux registres utiles pour ton secteur, obligations fiscales et sociales selon l'activité.
+Formalites frequentes a verifier sur les sites officiels avant toute decision : immatriculation aupres des autorites competentes selon la forme juridique, inscription aux registres utiles pour le secteur, obligations fiscales et sociales selon l'activite.
 
-Bonnes pratiques terrain : tester la demande avec de petits prototypes (pilotes locaux), réduire les dépendances à une connexion permanente, privilégier les modèles à faible coût d'amorçage.
+Bonnes pratiques terrain : tester la demande avec de petits prototypes, reduire les dependances a une connexion permanente, privilegier les modeles a faible cout d'amorcage, et documenter les retours clients localement.
 
-Pour la roadmap d'une micro-entreprise : clarifier l'offre, identifier 10 à 20 premiers clients potentiels dans ta zone, structurer une offre minimale, puis mesurer la traction avant d'investir lourdement.
+Pour la roadmap d'une micro-entreprise : clarifier l'offre, identifier 10 a 20 premiers clients potentiels dans la zone, structurer une offre minimale, puis mesurer la traction avant d'investir lourdement.

@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 
-import { buildEvidencePack } from "@/lib/agent/evidence-pack-builder";
+import { buildEvidencePack, type BuildEvidenceOptions } from "@/lib/agent/evidence-pack-builder";
 import {
   buildRetrievalQuery,
   type RecommendationProfilePayload,
@@ -18,6 +18,12 @@ function authorize(request: Request): boolean {
  * - { "query": "texte libre" }
  * ou
  * - { "recommendationProfile": RecommendationProfilePayload }
+ * 
+ * Options optionnelles:
+ * - maxItems (default 10)
+ * - minReliability (default 0)
+ * - searchMode ("semantic" | "fast")
+ * - boostRegion (code pays pour boost géographique)
  */
 export async function POST(request: Request) {
   if (!authorize(request)) {
@@ -27,24 +33,41 @@ export async function POST(request: Request) {
   const body = (await request.json()) as {
     query?: string;
     recommendationProfile?: RecommendationProfilePayload;
+    maxItems?: number;
+    minReliability?: number;
+    searchMode?: "fast" | "semantic";
+    boostRegion?: string;
   };
 
-  const query =
-    typeof body.query === "string" && body.query.trim().length > 0
-      ? body.query.trim()
-      : body.recommendationProfile
-        ? buildRetrievalQuery(body.recommendationProfile)
-        : "";
+  let query = "";
+  if (typeof body.query === "string" && body.query.trim().length > 0) {
+    query = body.query.trim();
+  } else if (body.recommendationProfile) {
+    query = buildRetrievalQuery(body.recommendationProfile);
+  }
 
   if (!query) {
     return NextResponse.json(
-      { error: "Fournir query (string) ou recommendationProfile (objet)." },
+      {
+        error:
+          "Fournir 'query' (string) ou 'recommendationProfile' (objet). Voir README ou exemple.",
+      },
       { status: 400 },
     );
   }
 
+  const options: BuildEvidenceOptions = {
+    maxItems: body.maxItems ?? 10,
+    minReliability: body.minReliability ?? 0,
+    searchMode: body.searchMode === "fast" ? "fast" : "semantic",
+    boostRegion: body.boostRegion,
+  };
+
   try {
-    const pack = await buildEvidencePack(query);
+    const pack = await buildEvidencePack(
+      body.recommendationProfile ?? query,
+      options,
+    );
     return NextResponse.json(pack);
   } catch (e) {
     return NextResponse.json(

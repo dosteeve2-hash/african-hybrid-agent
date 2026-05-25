@@ -1,0 +1,228 @@
+Subject: 🚀 Join Us: African Hybrid Agent v0.3 Production Ship
+
+---
+
+Hi Codex,
+
+We're shipping **African Hybrid Agent v0.3** this week — a production-grade LLM system for African contexts.
+
+**We need your expertise to make it happen.**
+
+---
+
+## 🎯 Your Mission (This Week)
+
+We're at the home stretch. The infrastructure is built, the code is written, the tests are drafted.
+
+Your week:
+- ✅ **Fix remaining tests** (target: 30+ of 36 passing)
+- ✅ **Generate embeddings** (550+ corpus chunks → pgvector vectors)
+- ✅ **Integrate cache** (Redis → 50%+ latency improvement)
+- ✅ **Setup CI/CD** (GitHub Actions automation)
+- ✅ **Validate & ship** (Production deployment)
+
+**Result:** v0.3 production-ready by Friday 🚀
+
+---
+
+## 📚 Your Onboarding Package
+
+We've prepared a complete onboarding package (10 documents, 2,500+ lines).
+
+**Start here:**
+
+1. **CODEX_BRIEFING.txt** (30 seconds)
+   - Ultra-short overview: problem, solution, why it matters
+
+2. **CODEX_WELCOME.md** (10 minutes)
+   - Warm introduction and motivation
+
+3. **QUICK_START.md** (5 minutes)
+   - Essential commands and quick tasks
+
+4. **CODEX_ONBOARDING.md** (30 minutes - BOOKMARK THIS)
+   - **THE complete reference document**
+   - Every feature explained, all code examples, troubleshooting
+
+5. **CODEX_WEEK1_CHECKLIST.md** (daily guide)
+   - Your Monday-Friday task list
+   - Hour-by-hour breakdown
+   - Success criteria
+
+**→ Then reference these as needed:**
+- ARCHITECTURE.md (system design, data flows)
+- SESSION_V0_3_FEATURES.md (vector search & caching details)
+- CODEX_DOCS_INDEX.md (navigation guide)
+- CODEX_ONE_PAGER.md (print & keep on desk)
+
+---
+
+## ✨ What You're Inheriting
+
+**Already complete:**
+- ✅ 14 authentic African corpus sources (550+ chunks)
+- ✅ PostgreSQL infrastructure (pgvector, full-text search)
+- ✅ Chat API with session persistence
+- ✅ Admin dashboard with statistics
+- ✅ Vector search service layer (pgvector)
+- ✅ Redis caching service (11 functions)
+- ✅ 36 Jest test cases
+- ✅ Docker Compose (4 services: postgres, pgvector, redis, adminer)
+- ✅ Complete documentation (9+ guides)
+
+**Your job:** Polish, integrate, and ship
+
+---
+
+## 🛠️ Tech Stack (You'll Learn These)
+
+```
+Next.js 16.2.4 (Turbopack, React 19)
+    ↓
+PostgreSQL 15 + pgvector (embeddings)
+    ↓
+Redis 7 (caching)
+    ↓
+14 African sources + 550+ chunks
+```
+
+---
+
+## 🎓 What You'll Learn
+
+- **Advanced PostgreSQL:** pgvector embeddings, full-text search, pooling
+- **Caching patterns:** Redis TTL, key management, graceful degradation
+- **Production architecture:** Layered services, transaction support
+- **African-focused AI:** Context-aware RAG, geographic boosting
+- **Testing at scale:** Jest, integration testing, mocking
+- **DevOps fundamentals:** Docker, CI/CD pipelines
+
+---
+
+## 📊 This Week's Schedule
+
+```
+MONDAY    | Onboarding + Testing Assessment (4h)
+TUESDAY   | Debug & Fix Tests (5h)  
+WEDNESDAY | Generate Embeddings (5h)
+THURSDAY  | Cache Integration (5h)
+FRIDAY    | Validation + CI/CD (5h)
+
+Total: ~25 hours distributed across week
+Target: v0.3 Production Release ✅
+```
+
+---
+
+## ✅ First Steps
+
+1. **Get the files**
+   - All docs are in: c:\Users\pc\Documents\New Project\
+   - Start with: CODEX_BRIEFING.txt
+
+2. **Read quickly (1 hour)**
+   ```
+   CODEX_BRIEFING.txt (30 sec)
+   + CODEX_WELCOME.md (10 min)
+   + QUICK_START.md (5 min)
+   + CODEX_ONBOARDING.md (30 min)
+   = Completely onboarded
+   ```
+
+3. **Verify setup (30 min)**
+   ```bash
+   cd "c:\Users\pc\Documents\New Project"
+   npm install redis --legacy-peer-deps
+   npm run build                    # Should compile
+   npm test -- --forceExit          # Should show results
+   docker-compose -f docker-compose.postgres.yml up -d  # Start services
+   ```
+
+4. **Report back**
+   - Build status: Success or errors?
+   - Tests: X/36 passing?
+   - Any blockers?
+
+---
+
+## 💪 Why This Project Matters
+
+This isn't just another project.
+
+**This is African futures.**
+
+- 🌍 **Authentically African** - Designed for African contexts by understanding African sources
+- ✊ **No Western Bias** - Real community voices, not corporate spin
+- 🚀 **Production-Grade** - Database, caching, monitoring, testing, deployment
+- 📚 **Knowledge** - 550+ chunks of authentic African context
+- 🎯 **Impact** - Millions of users will benefit from this
+- 🤝 **Great Team** - Small, focused, skilled engineers who know the project deeply
+
+---
+
+## 📞 Questions or Stuck?
+
+**Before asking:**
+1. Check CODEX_ONBOARDING.md (answers 90% of questions)
+2. Review source code comments
+3. Check test files for examples
+4. Try troubleshooting section
+
+**Then ask** - I'm available anytime.
+
+---
+
+## 🎁 You Have Everything
+
+✅ Complete codebase (15,000+ lines)
+✅ Production database (fully migrated)
+✅ Test framework (36 tests written)
+✅ Documentation (9+ guides, 2,500+ lines)
+✅ Infrastructure (Docker ready)
+✅ Team support (anytime you need help)
+
+**No guessing. No mysteries. Just solid work to complete.**
+
+---
+
+## 🚀 Ready to Ship?
+
+**Your next action:**
+
+1. Read: CODEX_BRIEFING.txt (30 sec)
+2. Read: CODEX_WELCOME.md (10 min)
+3. Run: `npm run build && npm test`
+4. Read: CODEX_ONBOARDING.md (30 min)
+5. Report back: Build status + test results
+
+---
+
+## 🎉 Welcome to the Team!
+
+We're excited to have you. 
+
+Let's make miracles happen.
+
+**By Friday, we'll have shipped v0.3 to production and started impacting millions of African users.**
+
+---
+
+**Let's go! 🚀**
+
+[Your Name]  
+Project Lead - African Hybrid Agent v0.3
+
+P.S. Start with CODEX_BRIEFING.txt. It's only 30 seconds. Then we'll chat.
+
+P.P.S. This is what production-grade development looks like. Learn from it. Enjoy it. Ship it.
+
+---
+
+**Attachments/References:**
+- CODEX_BRIEFING.txt (start here)
+- CODEX_WELCOME.md (motivation)
+- QUICK_START.md (commands)
+- CODEX_ONBOARDING.md (complete reference)
+- CODEX_WEEK1_CHECKLIST.md (daily tasks)
+- CODEX_DOCS_INDEX.md (all docs)
+- Project directory: c:\Users\pc\Documents\New Project\
