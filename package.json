@@ -10,7 +10,10 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
-    "generate-embeddings": "node scripts/generate-embeddings.js"
+    "generate-embeddings": "node scripts/generate-embeddings.js",
+    "load-test": "node scripts/load-test.js",
+    "load-test:prod": "BASE_URL=https://african-hybrid-agent.vercel.app node scripts/load-test.js",
+    "load-test:heavy": "NUM_REQUESTS=500 CONCURRENCY=50 node scripts/load-test.js"
   },
   "dependencies": {
     "@types/pg": "^8.20.0",
