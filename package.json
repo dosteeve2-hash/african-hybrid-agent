@@ -16,7 +16,9 @@
     "load-test:heavy": "NUM_REQUESTS=500 CONCURRENCY=50 node scripts/load-test.js"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.103.0",
     "@types/pg": "^8.20.0",
+    "marked": "^18.0.5",
     "next": "^16.2.4",
     "pg": "^8.20.0",
     "react": "19.2.4",

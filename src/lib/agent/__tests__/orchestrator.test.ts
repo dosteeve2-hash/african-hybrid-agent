@@ -97,7 +97,7 @@ describe('Agent Orchestrator', () => {
       });
 
       expect(response).toBeDefined();
-      expect(response.response.length).toBeGreaterThan(0);
+      expect((response.response ?? response.reply).length).toBeGreaterThan(0);
     });
 
     it('should handle conversation history', async () => {

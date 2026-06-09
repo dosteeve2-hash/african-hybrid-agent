@@ -1,7 +1,242 @@
 /**
- * Embeddings simples basés sur TF-IDF et recherche sémantique légère
- * Permet une récupération plus intelligente sans dépendre d'un modèle externe
+ * BM25 retrieval engine with African multilingual synonym expansion.
+ * BM25 outperforms TF-IDF via length normalization and term saturation.
  */
+
+// ── Constants ────────────────────────────────────────────────────────────────
+const BM25_K1 = 1.5;
+const BM25_B = 0.75;
+
+// ── Multilingual African synonym dictionary ──────────────────────────────────
+export const AFRICAN_SYNONYMS: Record<string, string[]> = {
+  // Agriculture / Agroécologie
+  agriculture: ["farming", "culture", "recolte", "semence", "agro", "agroecologie", "zai", "cultivation"],
+  agroecologie: ["agriculture", "zai", "demi-lune", "productivite", "ecologie", "durable"],
+  semence: ["graine", "seed", "variete", "plantation"],
+  irrigation: ["eau", "arrosage", "pompe", "canal", "barrage"],
+  // Bambara (Mali)
+  "so": ["maison", "famille", "foyer"],
+  "jiri": ["arbre", "bois", "foret"],
+  "sene": ["agriculture", "champ", "culture"],
+  // Mooré (Burkina Faso)
+  "pugsore": ["paysan", "agriculteur", "cultivateur"],
+  "zaka": ["maison", "famille", "village"],
+  "naab": ["chef", "roi", "autorite"],
+  // Wolof (Sénégal)
+  "xam-xam": ["connaissance", "savoir", "education"],
+  "liggey": ["travail", "emploi", "activite"],
+  "ndey": ["mere", "femme", "famille"],
+  // Hausa (Niger/Nigeria)
+  "noma": ["agriculture", "farming", "culture"],
+  "kasuwanci": ["commerce", "business", "marche"],
+  "ilimi": ["education", "ecole", "formation"],
+
+  // Entrepreneuriat & Finance
+  entrepreneuriat: ["business", "creation", "projet", "entreprise", "startup", "initiative", "commerce"],
+  microfinance: ["tontine", "credit", "epargne", "financement", "pret"],
+  tontine: ["epargne", "credit", "microfinance", "collecte", "financement"],
+  startup: ["entreprise", "innovation", "technologie", "projet"],
+
+  // Gouvernance & Social
+  gouvernance: ["gestion", "administration", "politique", "direction", "leadership", "decentralisation"],
+  decentralisation: ["commune", "municipal", "gouvernance", "locale"],
+  communaute: ["village", "quartier", "association", "groupe", "collectif"],
+
+  // Jeunesse & Education
+  jeune: ["jeunesse", "youth", "adolescent", "etudiant", "futur"],
+  education: ["formation", "ecole", "apprentissage", "enseignement", "savoir", "universite"],
+  emploi: ["travail", "job", "metier", "activite", "liggey", "noma"],
+
+  // Genre
+  femme: ["femmes", "feminin", "genre", "egalite", "female", "girl", "mere"],
+  genre: ["femme", "homme", "egalite", "equite", "droits"],
+
+  // Technologie & Numérique
+  technologie: ["digital", "tech", "numerique", "innovation", "internet"],
+  numerique: ["digital", "tech", "technologie", "innovation", "mobile", "internet"],
+  mobile: ["telephone", "smartphone", "sms", "numerique"],
+
+  // Environnement & Eau
+  eau: ["hydrologie", "ressource", "irrigation", "hygiene", "assainissement", "pompe"],
+  sante: ["medecin", "maladie", "health", "hygiene", "soins", "hopital"],
+  climat: ["environnement", "meteo", "secheresse", "weather", "ecologie", "changement"],
+  secheresse: ["aridite", "desertification", "climat", "eau"],
+
+  // Energie
+  energie: ["electricite", "solaire", "renouvelable", "panneau", "bioenergie"],
+  solaire: ["panneaux", "photovoltaique", "energie", "electricite"],
+
+  // Pêche
+  peche: ["poisson", "aquaculture", "filet", "pirogue", "lac", "fleuve", "mer"],
+  aquaculture: ["peche", "elevage", "poisson", "etang"],
+};
+
+export const STOP_WORDS = new Set([
+  "le", "la", "les", "un", "une", "des", "de", "du", "et", "ou", "à", "au", "aux",
+  "pour", "par", "sur", "dans", "est", "son", "sa", "ses", "ce", "cette", "ces",
+  "qui", "que", "dont", "avec", "sans", "plus", "moins", "très", "comme", "mais",
+  "donc", "car", "ni", "ne", "pas", "plus", "il", "elle", "ils", "elles", "on",
+  "nous", "vous", "me", "te", "se", "lui", "leur", "en", "y", "cela", "ça",
+  "the", "and", "or", "of", "to", "a", "an", "in", "on", "for", "with", "is",
+  "are", "was", "were", "be", "been", "by", "at", "from", "this", "that", "it",
+]);
+
+// ── Tokenization ─────────────────────────────────────────────────────────────
+
+export function tokenize(text: string): string[] {
+  return text
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/\p{M}/gu, "")
+    .split(/[^a-zA-ZÀ-ÿ0-9'-]+/)
+    .map((w) => w.replace(/^[-']+|[-']+$/g, ""))
+    .filter((w) => w.length >= 2 && !STOP_WORDS.has(w));
+}
+
+export function expandWithSynonyms(tokens: string[]): string[] {
+  const expanded = new Set(tokens);
+  for (const token of tokens) {
+    const syns = AFRICAN_SYNONYMS[token];
+    if (syns) {
+      for (const s of syns) expanded.add(s);
+    }
+    // Also check if any synonym key starts with this token (prefix matching)
+    for (const [key, values] of Object.entries(AFRICAN_SYNONYMS)) {
+      if (key.startsWith(token) && key !== token) {
+        expanded.add(key);
+        values.forEach((v) => expanded.add(v));
+      }
+    }
+  }
+  return Array.from(expanded);
+}
+
+// ── BM25 Index ───────────────────────────────────────────────────────────────
+
+export type BM25Document = {
+  id: string;
+  tokens: string[];
+  tf: Map<string, number>;
+  length: number;
+};
+
+export type BM25Index = {
+  documents: BM25Document[];
+  df: Map<string, number>;
+  avgDocLength: number;
+  N: number;
+  builtAt: Date;
+};
+
+export function buildBM25Index(docs: Array<{ id: string; text: string }>): BM25Index {
+  const documents: BM25Document[] = [];
+  const df = new Map<string, number>();
+  let totalLength = 0;
+
+  for (const doc of docs) {
+    const tokens = tokenize(doc.text);
+    const tf = new Map<string, number>();
+    for (const t of tokens) {
+      tf.set(t, (tf.get(t) ?? 0) + 1);
+    }
+    documents.push({ id: doc.id, tokens, tf, length: tokens.length });
+    totalLength += tokens.length;
+
+    // Document frequency
+    for (const term of tf.keys()) {
+      df.set(term, (df.get(term) ?? 0) + 1);
+    }
+  }
+
+  return {
+    documents,
+    df,
+    avgDocLength: documents.length > 0 ? totalLength / documents.length : 0,
+    N: documents.length,
+    builtAt: new Date(),
+  };
+}
+
+export function bm25Score(
+  queryTokens: string[],
+  doc: BM25Document,
+  index: BM25Index,
+): number {
+  let score = 0;
+  for (const term of queryTokens) {
+    const df = index.df.get(term) ?? 0;
+    if (df === 0) continue;
+
+    const idf = Math.log((index.N - df + 0.5) / (df + 0.5) + 1);
+    const tf = doc.tf.get(term) ?? 0;
+    const normTf =
+      (tf * (BM25_K1 + 1)) /
+      (tf + BM25_K1 * (1 - BM25_B + BM25_B * (doc.length / index.avgDocLength)));
+
+    score += idf * normTf;
+  }
+  return score;
+}
+
+// ── Credibility & geo boost ───────────────────────────────────────────────────
+
+export function credibilityBoost(tier: "official" | "high" | "medium" | "low"): number {
+  switch (tier) {
+    case "official": return 1.3;
+    case "high": return 1.15;
+    case "medium": return 1.0;
+    case "low": return 0.8;
+  }
+}
+
+export function geoBoost(docRegions: string[], targetRegion?: string): number {
+  if (!targetRegion || docRegions.length === 0) return 1.0;
+  if (docRegions.some((r) => r.toUpperCase() === targetRegion.toUpperCase())) return 1.25;
+
+  // Sub-region boost: same continent area
+  const westAfrica = new Set(["BF", "ML", "SN", "GN", "CI", "TG", "BJ", "NE", "MR", "GW", "NG", "GH", "SL", "LR", "GM"]);
+  const eastAfrica = new Set(["KE", "TZ", "ET", "UG", "RW", "BI", "SS", "SO", "ER", "DJ"]);
+  const region = (r: string) => {
+    if (westAfrica.has(r)) return "west";
+    if (eastAfrica.has(r)) return "east";
+    return "other";
+  };
+  const docZone = docRegions.map(region).find((z) => z !== "other") ?? "other";
+  const targetZone = region(targetRegion.toUpperCase());
+  return docZone !== "other" && docZone === targetZone ? 1.1 : 1.0;
+}
+
+// ── Cosine similarity (supports both number[] and Map) ───────────────────────
+
+export function cosineSimilarity(
+  a: number[] | Map<string, number>,
+  b: number[] | Map<string, number>,
+): number {
+  if (Array.isArray(a) && Array.isArray(b)) {
+    const len = Math.min(a.length, b.length);
+    let dot = 0, magA = 0, magB = 0;
+    for (let i = 0; i < len; i++) {
+      dot += (a[i] ?? 0) * (b[i] ?? 0);
+      magA += (a[i] ?? 0) ** 2;
+      magB += (b[i] ?? 0) ** 2;
+    }
+    const denom = Math.sqrt(magA) * Math.sqrt(magB);
+    return denom === 0 ? 0 : Math.max(0, Math.min(1, dot / denom));
+  }
+  const mapA = a instanceof Map ? a : new Map((a as number[]).map((v, i) => [String(i), v]));
+  const mapB = b instanceof Map ? b : new Map((b as number[]).map((v, i) => [String(i), v]));
+  let dot = 0, magA = 0, magB = 0;
+  for (const [k, va] of mapA) {
+    const vb = mapB.get(k) ?? 0;
+    dot += va * vb;
+    magA += va * va;
+  }
+  for (const vb of mapB.values()) magB += vb * vb;
+  const denom = Math.sqrt(magA) * Math.sqrt(magB);
+  return denom === 0 ? 0 : Math.max(0, Math.min(1, dot / denom));
+}
+
+// ── Legacy TF-IDF (backward compatibility for vectors.ts and scripts) ─────────
 
 export type TextVector = {
   text: string;
@@ -10,151 +245,24 @@ export type TextVector = {
   keywords: string[];
 };
 
-// Dictionnaire de synonymes africains/français pour améliorer la sémantique
-const SEMANTIC_SYNONYMS: Record<string, string[]> = {
-  entrepreneuriat: ["business", "creation", "projet", "entreprise", "startup", "initiative"],
-  agriculture: ["farming", "culture", "recolte", "semence", "agro", "agroecologie", "zai"],
-  agroecologie: ["agriculture", "zai", "demi-lune", "productivite"],
-  education: ["formation", "ecole", "apprentissage", "enseignement", "savoir"],
-  gouvernance: ["gestion", "administration", "politique", "direction", "leadership"],
-  jeune: ["jeunesse", "youth", "adolescent", "enfant", "futur"],
-  femme: ["femmes", "feminin", "genre", "egalite", "female", "girl"],
-  femmes: ["femme", "feminin", "genre", "egalite", "female", "girl"],
-  technologie: ["digital", "tech", "numerique", "innovation"],
-  numerique: ["digital", "tech", "technologie", "innovation"],
-  eau: ["hydrologie", "ressource", "irrigation", "sante", "hygiene"],
-  sante: ["medecin", "maladie", "health", "hygiene", "soins"],
-  climat: ["environnement", "meteo", "secheresse", "weather", "ecologie"],
-};
-
-function normalizeText(text: string): string {
-  return text.toLowerCase().normalize("NFD").replace(/\p{M}/gu, "");
-}
-
-export function tokenize(text: string, minLen = 3): string[] {
-  const FRENCH_STOP = new Set([
-    "le", "la", "les", "un", "une", "des", "de", "du", "et", "ou", "à", "au", "aux",
-    "pour", "par", "sur", "dans", "est", "son", "sa", "ses", "ce", "cette", "ces",
-    "qui", "que", "dont", "avec", "sans", "plus", "moins", "très", "comme",
-    "the", "and", "or", "of", "to", "a", "an", "in", "on", "for", "with", "is",
-  ]);
-
-  return normalizeText(text)
-    .split(/[^a-zA-ZÀ-ÿ0-9]+/)
-    .filter((w) => w.length >= minLen && !FRENCH_STOP.has(w));
-}
-
-export function buildTFIDFVector(
-  text: string,
-  allTexts: string[],
-): TextVector {
+export function buildTFIDFVector(text: string, allTexts: string[]): TextVector {
   const tokens = tokenize(text);
   const vocabulary = Array.from(
-    new Set([...allTexts.flatMap((doc) => tokenize(doc)), ...tokens]),
+    new Set([...allTexts.flatMap((d) => tokenize(d)), ...tokens]),
   ).sort();
 
-  // TF (Term Frequency) - fréquence des termes dans ce document
   const tf: Record<string, number> = {};
-  for (const token of tokens) {
-    tf[token] = (tf[token] || 0) + 1;
-  }
+  for (const t of tokens) tf[t] = (tf[t] ?? 0) + 1;
 
-  // IDF (Inverse Document Frequency) - dans combien de documents ce terme apparaît
   const idf: Record<string, number> = {};
-  for (const token of vocabulary) {
-    let docsWithToken = 0;
-    for (const doc of allTexts) {
-      if (tokenize(doc).includes(token)) {
-        docsWithToken++;
-      }
-    }
-    idf[token] = Math.log((allTexts.length + 1) / (1 + docsWithToken)) + 1;
+  for (const term of vocabulary) {
+    const count = allTexts.filter((d) => tokenize(d).includes(term)).length;
+    idf[term] = Math.log((allTexts.length + 1) / (1 + count)) + 1;
   }
 
-  // TF-IDF score pour chaque token
-  const vector: number[] = vocabulary.map((token) => {
-    return (tf[token] || 0) * (idf[token] || 0);
-  });
+  const vector = vocabulary.map((t) => (tf[t] ?? 0) * (idf[t] ?? 0));
+  const mag = Math.sqrt(vector.reduce((s, v) => s + v * v, 0));
+  const normalizedVector = mag > 0 ? vector.map((v) => v / mag) : vector;
 
-  // Normalisation L2
-  const magnitude = Math.sqrt(vector.reduce((sum, v) => sum + v * v, 0));
-  const normalizedVector = magnitude > 0 ? vector.map((v) => v / magnitude) : vector;
-
-  return {
-    text,
-    vector,
-    normalizedVector,
-    keywords: tokens.slice(0, 10), // Top 10 mots clés
-  };
-}
-
-export function cosineSimilarity(v1: number[], v2: number[]): number {
-  const len = Math.min(v1.length, v2.length);
-  if (len === 0) return 0;
-
-  let dot = 0;
-  let mag1 = 0;
-  let mag2 = 0;
-  for (let i = 0; i < len; i++) {
-    const a = v1[i] || 0;
-    const b = v2[i] || 0;
-    dot += a * b;
-    mag1 += a * a;
-    mag2 += b * b;
-  }
-  const denom = Math.sqrt(mag1) * Math.sqrt(mag2);
-  if (denom === 0) return 0;
-  return Math.max(0, Math.min(1, dot / denom));
-}
-
-/**
- * Enrichit les tokens avec des synonymes sémantiques
- */
-export function expandWithSynonyms(tokens: string[]): string[] {
-  const expanded = new Set(tokens);
-  for (const token of tokens) {
-    const syns = SEMANTIC_SYNONYMS[normalizeText(token)];
-    if (syns) {
-      syns.forEach((s) => expanded.add(normalizeText(s)));
-    }
-  }
-  return Array.from(expanded);
-}
-
-/**
- * Calcule un score de pertinence basé sur:
- * - Similarité textuelle TF-IDF
- * - Présence de synonymes
- * - Proximité de régions géographiques
- */
-export function computeRelevanceScore(
-  query: string,
-  documentText: string,
-  docMeta?: { region?: string; credibilityScore?: number },
-  queryRegion?: string,
-): number {
-  const queryTokens = tokenize(query);
-  const expandedQuery = expandWithSynonyms(queryTokens);
-  const docTokens = tokenize(documentText);
-
-  // Score de correspondance lexicale
-  let lexicalScore = 0;
-  for (const token of expandedQuery) {
-    if (docTokens.includes(token)) {
-      lexicalScore++;
-    }
-  }
-  lexicalScore = Math.min(1, lexicalScore / expandedQuery.length);
-
-  // Score de proximité géographique
-  let regionScore = 0;
-  if (queryRegion && docMeta?.region) {
-    regionScore = queryRegion === docMeta.region ? 0.2 : -0.1;
-  }
-
-  // Score de crédibilité
-  const credScore = (docMeta?.credibilityScore ?? 60) / 100;
-
-  // Score final: combinaison pondérée
-  return 0.6 * lexicalScore + 0.2 * credScore + 0.2 * Math.max(0, regionScore);
+  return { text, vector, normalizedVector, keywords: tokens.slice(0, 10) };
 }

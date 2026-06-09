@@ -1,197 +1,177 @@
 import { loadCorpus, type CorpusChunk } from "@/lib/rag/corpus";
-import { computeRelevanceScore } from "@/lib/rag/embeddings";
+import {
+  buildBM25Index,
+  bm25Score,
+  expandWithSynonyms,
+  tokenize,
+  credibilityBoost,
+  geoBoost,
+  type BM25Index,
+} from "@/lib/rag/embeddings";
 import { scoreFromMeta } from "@/lib/sources/credibility";
+
+// ── Types ─────────────────────────────────────────────────────────────────────
 
 export interface RetrievalOptions {
   topK?: number;
   minRelevanceScore?: number;
   boostRegion?: string;
-  searchMode?: "fast" | "semantic";
+  searchMode?: "fast" | "semantic" | "hybrid";
 }
 
 export type RetrievedChunk = CorpusChunk & {
   source: string;
   relevanceScore: number;
+  bm25Score: number;
   credibility: number;
 };
 
-const STOP = new Set([
-  "le",
-  "la",
-  "les",
-  "un",
-  "une",
-  "des",
-  "de",
-  "du",
-  "et",
-  "ou",
-  "a",
-  "au",
-  "aux",
-  "pour",
-  "par",
-  "sur",
-  "dans",
-  "est",
-  "son",
-  "sa",
-  "ses",
-  "ce",
-  "cette",
-  "ces",
-  "qui",
-  "que",
-  "dont",
-  "avec",
-  "sans",
-  "plus",
-  "moins",
-  "tres",
-  "comme",
-  "the",
-  "and",
-  "or",
-  "of",
-  "to",
-  "an",
-  "in",
-  "on",
-  "for",
-  "with",
-]);
+// ── In-memory BM25 index (singleton per process) ──────────────────────────────
 
-function tokenizeFast(q: string): string[] {
-  return q
-    .toLowerCase()
-    .normalize("NFD")
-    .replace(/\p{M}/gu, "")
-    .split(/[^a-zA-Z0-9]+/u)
-    .filter((w) => w.length > 2 && !STOP.has(w));
+let bm25Index: BM25Index | null = null;
+let indexedChunks: CorpusChunk[] = [];
+
+async function getOrBuildIndex(): Promise<{ index: BM25Index; chunks: CorpusChunk[] }> {
+  if (bm25Index && indexedChunks.length > 0) {
+    return { index: bm25Index, chunks: indexedChunks };
+  }
+  const chunks = await loadCorpus();
+  bm25Index = buildBM25Index(
+    chunks.map((c) => ({ id: c.id, text: `${c.meta.title ?? ""} ${c.text}` }))
+  );
+  indexedChunks = chunks;
+  return { index: bm25Index, chunks };
 }
 
-function enrichChunk(c: CorpusChunk, relevanceScore: number): RetrievedChunk {
-  const credibility = scoreFromMeta(c.meta);
+export function invalidateBM25Index(): void {
+  bm25Index = null;
+  indexedChunks = [];
+}
+
+// ── Scoring ───────────────────────────────────────────────────────────────────
+
+function buildRetrievedChunk(chunk: CorpusChunk, rawScore: number): RetrievedChunk {
+  const cred = scoreFromMeta(chunk.meta);
+  const regions = chunk.meta.regions ?? (chunk.meta.region ? [chunk.meta.region] : []);
   return {
-    ...c,
-    source: c.sourceFile,
-    relevanceScore: Number(Math.max(0, Math.min(1, relevanceScore)).toFixed(3)),
-    credibility,
+    ...chunk,
+    source: chunk.sourceFile,
+    bm25Score: rawScore,
+    relevanceScore: rawScore,
+    credibility: cred,
   };
 }
 
-function retrieveChunksFast(
+function applyBoosts(
+  chunks: Array<{ chunk: CorpusChunk; score: number }>,
+  boostRegion?: string,
+): Array<{ chunk: CorpusChunk; score: number }> {
+  return chunks.map(({ chunk, score }) => {
+    const regions = chunk.meta.regions ?? (chunk.meta.region ? [chunk.meta.region] : []);
+    const cred = chunk.meta.credibilityTier ?? "medium";
+    const boosted = score * credibilityBoost(cred) * geoBoost(regions, boostRegion);
+    return { chunk, score: boosted };
+  });
+}
+
+// ── Fast retrieval (keyword matching) ─────────────────────────────────────────
+
+function retrieveFast(
   query: string,
   chunks: CorpusChunk[],
   topK: number,
+  boostRegion?: string,
 ): RetrievedChunk[] {
-  const tokens = new Set(tokenizeFast(query));
-  if (tokens.size === 0) return chunks.slice(0, topK).map((c) => enrichChunk(c, 0));
+  const tokens = new Set(tokenize(query));
+  if (tokens.size === 0) return chunks.slice(0, topK).map((c) => buildRetrievedChunk(c, 0));
 
   const scored = chunks.map((c) => {
-    const hay = `${c.meta.title ?? ""} ${c.text}`
-      .toLowerCase()
-      .normalize("NFD")
-      .replace(/\p{M}/gu, "");
-    let lexical = 0;
-    for (const t of tokens) {
-      if (hay.includes(t)) lexical += 1;
-    }
-    const relevance = Math.min(1, lexical / Math.max(1, tokens.size));
-    return { c, score: relevance };
+    const hay = `${c.meta.title ?? ""} ${c.text}`.toLowerCase().normalize("NFD").replace(/\p{M}/gu, "");
+    let hits = 0;
+    for (const t of tokens) if (hay.includes(t)) hits++;
+    return { chunk: c, score: hits / tokens.size };
   });
 
-  scored.sort((a, b) => b.score - a.score);
-  const filtered = scored.filter((s) => s.score > 0);
-  return (filtered.length ? filtered : scored)
+  const boosted = applyBoosts(scored, boostRegion);
+  boosted.sort((a, b) => b.score - a.score);
+  const filtered = boosted.filter((s) => s.score > 0);
+  return (filtered.length ? filtered : boosted)
     .slice(0, topK)
-    .map((s) => enrichChunk(s.c, s.score));
+    .map(({ chunk, score }) => buildRetrievedChunk(chunk, score));
 }
 
-function retrieveChunksSemantic(
+// ── BM25 semantic retrieval ───────────────────────────────────────────────────
+
+function retrieveBM25(
   query: string,
   chunks: CorpusChunk[],
+  index: BM25Index,
   topK: number,
   minScore: number,
   boostRegion?: string,
 ): RetrievedChunk[] {
-  if (!query.trim()) return chunks.slice(0, topK).map((c) => enrichChunk(c, 0));
+  const queryTokens = expandWithSynonyms(tokenize(query));
+  if (queryTokens.length === 0) return chunks.slice(0, topK).map((c) => buildRetrievedChunk(c, 0));
 
-  const scored = chunks.map((c) => {
-    const fullText = `${c.meta.title ?? ""} ${c.text}`;
-    const score = computeRelevanceScore(
-      query,
-      fullText,
-      {
-        region: c.meta.region,
-        credibilityScore: scoreFromMeta(c.meta),
-      },
-      boostRegion,
-    );
-    return { c, score };
-  });
+  const scored = index.documents.map((doc, i) => ({
+    chunk: chunks[i],
+    score: bm25Score(queryTokens, doc, index),
+  }));
 
-  scored.sort((a, b) => b.score - a.score);
-  const filtered = scored.filter((s) => s.score >= minScore);
-  const shouldFallback = filtered.length === 0 && minScore <= 0.1;
-  return (filtered.length > 0 ? filtered : shouldFallback ? scored : [])
-    .slice(0, topK)
-    .map((s) => enrichChunk(s.c, s.score));
+  const boosted = applyBoosts(scored, boostRegion);
+  boosted.sort((a, b) => b.score - a.score);
+
+  const maxScore = boosted[0]?.score ?? 1;
+  const normalized = boosted.map(({ chunk, score }) => ({
+    chunk,
+    score: maxScore > 0 ? score / maxScore : 0,
+  }));
+
+  const filtered = normalized.filter((s) => s.score >= minScore);
+  const results = (filtered.length > 0 ? filtered : normalized).slice(0, topK);
+  return results.map(({ chunk, score }) => buildRetrievedChunk(chunk, score));
 }
 
-function normalizeArgs(
-  chunksOrOptions?: CorpusChunk[] | number | RetrievalOptions,
-  maybeOptions?: number | RetrievalOptions,
-): {
-  chunks?: CorpusChunk[];
-  options: RetrievalOptions;
-} {
-  if (Array.isArray(chunksOrOptions)) {
-    const options =
-      typeof maybeOptions === "number"
-        ? { topK: maybeOptions }
-        : (maybeOptions ?? {});
-    return { chunks: chunksOrOptions, options };
-  }
+// ── Public API ────────────────────────────────────────────────────────────────
 
-  if (typeof chunksOrOptions === "number") {
-    return { options: { topK: chunksOrOptions } };
-  }
-
-  return { options: chunksOrOptions ?? {} };
-}
-
-export function retrieveChunks(
+export async function retrieveChunks(
   query: string,
-  chunks: CorpusChunk[],
-  options?: number | RetrievalOptions,
-): RetrievedChunk[];
-export function retrieveChunks(
-  query: string,
-  options?: number | RetrievalOptions,
+  options?: RetrievalOptions,
 ): Promise<RetrievedChunk[]>;
 export function retrieveChunks(
   query: string,
-  chunksOrOptions?: CorpusChunk[] | number | RetrievalOptions,
-  maybeOptions?: number | RetrievalOptions,
+  chunks: CorpusChunk[],
+  options?: RetrievalOptions,
+): RetrievedChunk[];
+export function retrieveChunks(
+  query: string,
+  chunksOrOptions?: CorpusChunk[] | RetrievalOptions,
+  maybeOptions?: RetrievalOptions,
 ): RetrievedChunk[] | Promise<RetrievedChunk[]> {
-  const { chunks, options } = normalizeArgs(chunksOrOptions, maybeOptions);
-  const topK = options.topK ?? 5;
-  const minRelevanceScore = options.minRelevanceScore ?? 0.1;
-  const mode = options.searchMode ?? "semantic";
-
-  const run = (sourceChunks: CorpusChunk[]): RetrievedChunk[] => {
-    if (sourceChunks.length === 0) return [];
-    if (mode === "fast") return retrieveChunksFast(query, sourceChunks, topK);
-    return retrieveChunksSemantic(
-      query,
-      sourceChunks,
-      topK,
-      minRelevanceScore,
-      options.boostRegion,
+  if (Array.isArray(chunksOrOptions)) {
+    const opts = maybeOptions ?? {};
+    const topK = opts.topK ?? 6;
+    const minScore = opts.minRelevanceScore ?? 0.05;
+    const mode = opts.searchMode ?? "semantic";
+    const idx = buildBM25Index(
+      chunksOrOptions.map((c) => ({ id: c.id, text: `${c.meta.title ?? ""} ${c.text}` }))
     );
-  };
+    if (mode === "fast") return retrieveFast(query, chunksOrOptions, topK, opts.boostRegion);
+    return retrieveBM25(query, chunksOrOptions, idx, topK, minScore, opts.boostRegion);
+  }
 
-  if (chunks) return run(chunks);
-  return loadCorpus().then(run);
+  // Async path — use global index
+  const rawOpts = chunksOrOptions as RetrievalOptions | number | undefined;
+  const opts: RetrievalOptions = typeof rawOpts === "number" ? { topK: rawOpts } : (rawOpts ?? {});
+  const topK = opts.topK ?? 6;
+  const minScore = opts.minRelevanceScore ?? 0.05;
+  const mode = opts.searchMode ?? "semantic";
+
+  if (mode === "fast") {
+    return loadCorpus().then((chunks) => retrieveFast(query, chunks, topK, opts.boostRegion));
+  }
+
+  return getOrBuildIndex().then(({ index, chunks }) =>
+    retrieveBM25(query, chunks, index, topK, minScore, opts.boostRegion)
+  );
 }

@@ -1,14 +1,65 @@
 @import "tailwindcss";
 
 :root {
-  --bg: #0c0a09;
-  --surface: #1c1917;
-  --accent: #ea580c;
-  --text: #fafaf9;
-  --muted: #a8a29e;
+  --bg: #09090b;
+  --surface: #111113;
+  --surface-2: #18181b;
+  --border: #27272a;
+  --accent: #10b981;
+  --accent-dim: #065f46;
+  --text: #fafafa;
+  --muted: #71717a;
+  --muted-2: #a1a1aa;
+}
+
+* {
+  box-sizing: border-box;
 }
 
 body {
   background: var(--bg);
   color: var(--text);
+}
+
+/* Streaming text cursor */
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+.cursor-blink::after {
+  content: "▋";
+  animation: blink 0.8s step-end infinite;
+  color: var(--accent);
+  font-size: 0.85em;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #3f3f46; }
+
+/* Markdown in chat */
+.prose-african h1, .prose-african h2, .prose-african h3 {
+  color: #f4f4f5;
+  margin-top: 1rem;
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+}
+.prose-african p { margin-bottom: 0.75rem; line-height: 1.7; }
+.prose-african ul, .prose-african ol { margin-left: 1.25rem; margin-bottom: 0.75rem; }
+.prose-african li { margin-bottom: 0.25rem; }
+.prose-african strong { color: #e4e4e7; }
+.prose-african em { color: #a1a1aa; }
+.prose-african code {
+  background: #27272a;
+  padding: 0.1em 0.3em;
+  border-radius: 3px;
+  font-size: 0.85em;
+}
+.prose-african blockquote {
+  border-left: 3px solid var(--accent);
+  padding-left: 0.75rem;
+  color: var(--muted-2);
 }

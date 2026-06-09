@@ -1,648 +1,487 @@
 "use client";
 
-import type { ReactNode } from "react";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { marked } from "marked";
+import type { ChatMessage, ChatMode, ChatResponseBody, Citation, StreamChunk } from "@/lib/types/chat";
 
-import type { ChatMessage, ChatMode, ChatResponseBody } from "@/lib/types/chat";
-import type { EvidencePack } from "@/lib/types/evidence";
+// ── Types ─────────────────────────────────────────────────────────────────────
 
-const starterPrompts = [
-  "Comment construire un LLM africain fiable sans reprendre les biais du web ?",
-  "Analyse un probleme d'entrepreneuriat jeune au Burkina et propose les sources a verifier.",
-  "Comment Problem to Project Africa peut appeler cet agent pour enrichir ses recommandations ?",
-];
-
-type P2PProfile = {
-  country: string;
-  region: string;
-  preferredSector: string;
-  skills: string;
-  observedProblem: string;
-  goal: string;
-  constraints: string;
+type UiMessage = {
+  role: "user" | "assistant";
+  content: string;
+  meta?: Partial<ChatResponseBody>;
+  streaming?: boolean;
 };
 
-type UiMessage = ChatMessage & {
-  meta?: ChatResponseBody;
-};
-
-type CorpusAudit = {
+type CorpusStats = {
   totalChunks: number;
   totalSources: number;
-  sources: {
-    sourceFile: string;
-    title: string;
-    sourceType: string;
-    region: string;
-    credibilityScore: number;
-    credibilityLabel: string;
-    chunks: number;
-  }[];
 };
 
-function pct(value: number): string {
-  return `${Math.round(value * 100)}%`;
+// ── Starter prompts ────────────────────────────────────────────────────────────
+
+const STARTERS = [
+  "Quelles solutions agroécologiques marchent en zone sahélienne ?",
+  "Comment les femmes accèdent au financement au Burkina Faso ?",
+  "Quelles innovations numériques transforment l'agriculture en Afrique de l'Ouest ?",
+  "Comment monter une coopérative agricole au Mali ?",
+];
+
+// ── Markdown renderer ─────────────────────────────────────────────────────────
+
+function renderMarkdown(text: string): string {
+  try {
+    return marked(text, { breaks: true, gfm: true }) as string;
+  } catch {
+    return text;
+  }
 }
 
-export default function Home() {
-  const [input, setInput] = useState(starterPrompts[0]);
-  const [mode, setMode] = useState<ChatMode>("research");
-  const [loading, setLoading] = useState(false);
-  const [evidenceLoading, setEvidenceLoading] = useState(false);
-  const [messages, setMessages] = useState<UiMessage[]>([]);
-  const [evidence, setEvidence] = useState<EvidencePack | null>(null);
-  const [error, setError] = useState<string | null>(null);
-  const [corpusAudit, setCorpusAudit] = useState<CorpusAudit | null>(null);
-  const [profile, setProfile] = useState<P2PProfile>({
-    country: "Burkina Faso",
-    region: "Ouagadougou / zones periurbaines",
-    preferredSector: "entrepreneuriat, agriculture, education",
-    skills: "vente, organisation communautaire, outils numeriques",
-    observedProblem:
-      "jeunes avec competences pratiques mais peu de sources fiables pour cadrer un projet",
-    goal: "transformer un probleme local en projet faisable",
-    constraints: "budget faible, connexion parfois instable, besoin de validation terrain",
-  });
+// ── Credibility badge ──────────────────────────────────────────────────────────
 
-  const lastAssistant = useMemo(
-    () => [...messages].reverse().find((m) => m.role === "assistant"),
-    [messages],
+function CredBadge({ score }: { score: number }) {
+  const color =
+    score >= 90
+      ? "bg-emerald-900/50 text-emerald-300 border-emerald-700"
+      : score >= 75
+        ? "bg-sky-900/50 text-sky-300 border-sky-700"
+        : score >= 55
+          ? "bg-amber-900/50 text-amber-300 border-amber-700"
+          : "bg-red-900/50 text-red-300 border-red-700";
+  return (
+    <span className={`inline-flex items-center rounded border px-1.5 py-0.5 text-[10px] font-medium ${color}`}>
+      {score}/100
+    </span>
   );
+}
+
+// ── Citation card ─────────────────────────────────────────────────────────────
+
+function CitationCard({ citation }: { citation: Citation }) {
+  const [expanded, setExpanded] = useState(false);
+  return (
+    <div className="rounded-lg border border-zinc-800 bg-zinc-900/60 p-3 text-xs">
+      <div className="flex items-start justify-between gap-2">
+        <div className="flex-1 min-w-0">
+          <p className="font-medium text-zinc-200 truncate">
+            {citation.title ?? citation.sourceFile}
+          </p>
+          <div className="mt-1 flex flex-wrap items-center gap-2 text-zinc-500">
+            {citation.region && (
+              <span className="rounded bg-zinc-800 px-1.5 py-0.5">{citation.region}</span>
+            )}
+            {citation.sourceType && citation.sourceType !== "unspecified" && (
+              <span className="rounded bg-zinc-800 px-1.5 py-0.5">{citation.sourceType}</span>
+            )}
+            <CredBadge score={citation.credibilityScore} />
+          </div>
+        </div>
+        <button
+          onClick={() => setExpanded(!expanded)}
+          className="shrink-0 text-zinc-500 hover:text-zinc-300 transition-colors"
+          aria-label="Voir extrait"
+        >
+          {expanded ? "▲" : "▼"}
+        </button>
+      </div>
+      {expanded && (
+        <p className="mt-2 leading-5 text-zinc-400 border-t border-zinc-800 pt-2">
+          {citation.excerpt}
+        </p>
+      )}
+    </div>
+  );
+}
+
+// ── Message block ─────────────────────────────────────────────────────────────
+
+function MessageBlock({ msg }: { msg: UiMessage }) {
+  const isUser = msg.role === "user";
+
+  return (
+    <div className={`flex gap-3 ${isUser ? "flex-row-reverse" : ""}`}>
+      {/* Avatar */}
+      <div
+        className={`shrink-0 w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold ${
+          isUser ? "bg-zinc-700 text-zinc-300" : "bg-emerald-900 text-emerald-300"
+        }`}
+      >
+        {isUser ? "U" : "A"}
+      </div>
+
+      <div className={`flex-1 min-w-0 space-y-3 ${isUser ? "items-end flex flex-col" : ""}`}>
+        {/* Bubble */}
+        <div
+          className={`rounded-xl px-4 py-3 max-w-prose ${
+            isUser
+              ? "bg-emerald-900/30 border border-emerald-800 text-zinc-100 text-sm"
+              : "bg-zinc-900 border border-zinc-800 text-zinc-200 text-sm"
+          } ${msg.streaming ? "cursor-blink" : ""}`}
+        >
+          {isUser ? (
+            <p className="whitespace-pre-wrap leading-relaxed">{msg.content}</p>
+          ) : (
+            <div
+              className="prose-african leading-relaxed"
+              dangerouslySetInnerHTML={{ __html: renderMarkdown(msg.content) }}
+            />
+          )}
+        </div>
+
+        {/* Citations */}
+        {!isUser && msg.meta?.citations && msg.meta.citations.length > 0 && !msg.streaming && (
+          <div className="w-full space-y-1.5">
+            <p className="text-[11px] font-medium uppercase tracking-wider text-zinc-500">
+              {msg.meta.citations.length} source{msg.meta.citations.length > 1 ? "s" : ""} récupérée{msg.meta.citations.length > 1 ? "s" : ""}
+            </p>
+            <div className="grid gap-1.5 sm:grid-cols-2">
+              {msg.meta.citations.map((c) => (
+                <CitationCard key={c.id} citation={c} />
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Metadata bar */}
+        {!isUser && msg.meta && !msg.streaming && (
+          <div className="flex flex-wrap items-center gap-3 text-[11px] text-zinc-500">
+            {msg.meta.confidence !== undefined && (
+              <span>
+                Confiance:{" "}
+                <span className={msg.meta.confidence >= 0.6 ? "text-emerald-400" : "text-amber-400"}>
+                  {Math.round(msg.meta.confidence * 100)}%
+                </span>
+              </span>
+            )}
+            {msg.meta.providerUsed && (
+              <span>
+                via{" "}
+                <span className="text-zinc-400">{msg.meta.providerUsed}</span>
+              </span>
+            )}
+            {msg.meta.perf?.totalMs && (
+              <span>{msg.meta.perf.totalMs}ms</span>
+            )}
+          </div>
+        )}
+
+        {/* Warnings */}
+        {!isUser && msg.meta?.warnings && msg.meta.warnings.length > 0 && !msg.streaming && (
+          <div className="rounded-lg border border-amber-800/50 bg-amber-950/30 px-3 py-2 text-xs text-amber-300">
+            {msg.meta.warnings.join(" ")}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// ── Loading dots ──────────────────────────────────────────────────────────────
+
+function ThinkingDots() {
+  return (
+    <div className="flex gap-3">
+      <div className="shrink-0 w-8 h-8 rounded-full bg-emerald-900 flex items-center justify-center text-xs font-bold text-emerald-300">
+        A
+      </div>
+      <div className="rounded-xl border border-zinc-800 bg-zinc-900 px-4 py-3">
+        <div className="flex items-center gap-1.5">
+          {[0, 1, 2].map((i) => (
+            <span
+              key={i}
+              className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-bounce"
+              style={{ animationDelay: `${i * 0.15}s` }}
+            />
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ── Main page ─────────────────────────────────────────────────────────────────
+
+export default function Home() {
+  const [messages, setMessages] = useState<UiMessage[]>([]);
+  const [input, setInput] = useState("");
+  const [mode, setMode] = useState<ChatMode>("general");
+  const [loading, setLoading] = useState(false);
+  const [streamMode, setStreamMode] = useState(true);
+  const [boostRegion, setBoostRegion] = useState("");
+  const [corpusStats, setCorpusStats] = useState<CorpusStats | null>(null);
+  const bottomRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLTextAreaElement>(null);
 
   useEffect(() => {
-    let cancelled = false;
-
-    async function loadAudit() {
-      try {
-        const res = await fetch("/api/corpus");
-        if (!res.ok) return;
-        const data = (await res.json()) as CorpusAudit;
-        if (!cancelled) setCorpusAudit(data);
-      } catch {
-        if (!cancelled) setCorpusAudit(null);
-      }
-    }
-
-    void loadAudit();
-    return () => {
-      cancelled = true;
-    };
+    fetch("/api/corpus")
+      .then((r) => r.json())
+      .then((d) => setCorpusStats({ totalChunks: d.totalChunks, totalSources: d.totalSources }))
+      .catch(() => null);
   }, []);
+
+  useEffect(() => {
+    bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
 
   async function send(promptOverride?: string) {
     const content = (promptOverride ?? input).trim();
     if (!content || loading) return;
 
-    const nextMessages: UiMessage[] = [
-      ...messages,
-      { role: "user", content },
-    ];
-
-    setMessages(nextMessages);
+    const history = [...messages, { role: "user" as const, content }];
+    setMessages(history);
     setInput("");
     setLoading(true);
-    setError(null);
 
     try {
-      const res = await fetch("/api/chat", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          messages: nextMessages.map(({ role, content }) => ({ role, content })),
-          mode,
-        }),
-      });
-      const data = (await res.json()) as ChatResponseBody & { error?: string };
-      if (!res.ok) {
-        setError(data.error ?? `Erreur ${res.status}`);
-        return;
+      if (streamMode) {
+        await sendStreaming(history);
+      } else {
+        await sendBlocking(history);
       }
-      setMessages((current) => [
-        ...current,
-        { role: "assistant", content: data.reply, meta: data },
-      ]);
-    } catch (e) {
-      setError(e instanceof Error ? e.message : "Erreur reseau");
     } finally {
       setLoading(false);
+      inputRef.current?.focus();
     }
   }
 
-  async function buildEvidence() {
-    const query =
-      input.trim() ||
-      [...messages].reverse().find((m) => m.role === "user")?.content ||
-      starterPrompts[1];
+  async function sendStreaming(history: UiMessage[]) {
+    // Add placeholder assistant message
+    const placeholderIndex = history.length;
+    setMessages([...history, { role: "assistant", content: "", streaming: true }]);
 
-    setEvidenceLoading(true);
-    setError(null);
-    try {
-      const res = await fetch("/api/evidence", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ query }),
+    const res = await fetch("/api/chat", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        messages: history.map(({ role, content }) => ({ role, content })),
+        mode,
+        stream: true,
+        boostRegion: boostRegion || undefined,
+      }),
+    });
+
+    if (!res.ok || !res.body) {
+      setMessages((prev) => {
+        const next = [...prev];
+        next[placeholderIndex] = { role: "assistant", content: "Erreur lors du streaming.", streaming: false };
+        return next;
       });
-      const data = (await res.json()) as EvidencePack & { error?: string };
-      if (!res.ok) {
-        setError(data.error ?? `Erreur ${res.status}`);
-        return;
-      }
-      setEvidence(data);
-    } catch (e) {
-      setError(e instanceof Error ? e.message : "Erreur evidence");
-    } finally {
-      setEvidenceLoading(false);
+      return;
     }
+
+    const reader = res.body.getReader();
+    const decoder = new TextDecoder();
+    let accumulated = "";
+    let citations: Citation[] = [];
+    let meta: Partial<ChatResponseBody> = {};
+    let buffer = "";
+
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+
+      buffer += decoder.decode(value, { stream: true });
+      const lines = buffer.split("\n");
+      buffer = lines.pop() ?? "";
+
+      for (const line of lines) {
+        if (!line.startsWith("data: ")) continue;
+        try {
+          const event = JSON.parse(line.slice(6)) as StreamChunk;
+          if (event.type === "text") {
+            accumulated += event.content;
+            setMessages((prev) => {
+              const next = [...prev];
+              next[placeholderIndex] = {
+                role: "assistant",
+                content: accumulated,
+                streaming: true,
+                meta: { citations },
+              };
+              return next;
+            });
+          } else if (event.type === "citations") {
+            citations = event.citations;
+          } else if (event.type === "done") {
+            meta = event.meta;
+          }
+        } catch { /* ignore parse errors */ }
+      }
+    }
+
+    setMessages((prev) => {
+      const next = [...prev];
+      next[placeholderIndex] = {
+        role: "assistant",
+        content: accumulated,
+        streaming: false,
+        meta: { ...meta, citations },
+      };
+      return next;
+    });
   }
 
-  async function buildProfileEvidence() {
-    setEvidenceLoading(true);
-    setError(null);
-    try {
-      const res = await fetch("/api/evidence", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          recommendationProfile: {
-            country: profile.country,
-            region: profile.region,
-            preferredSector: profile.preferredSector,
-            skills: profile.skills
-              .split(",")
-              .map((skill) => skill.trim())
-              .filter(Boolean),
-            observedProblem: profile.observedProblem,
-            goal: profile.goal,
-            constraints: profile.constraints,
-            mode: "prototype",
-            language: "fr",
-          },
-        }),
-      });
-      const data = (await res.json()) as EvidencePack & { error?: string };
-      if (!res.ok) {
-        setError(data.error ?? `Erreur ${res.status}`);
-        return;
-      }
-      setEvidence(data);
-      setInput(data.querySummary);
-    } catch (e) {
-      setError(e instanceof Error ? e.message : "Erreur profil P2P");
-    } finally {
-      setEvidenceLoading(false);
+  async function sendBlocking(history: UiMessage[]) {
+    const res = await fetch("/api/chat", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        messages: history.map(({ role, content }) => ({ role, content })),
+        mode,
+        boostRegion: boostRegion || undefined,
+      }),
+    });
+    const data = (await res.json()) as ChatResponseBody & { error?: string };
+    if (!res.ok) {
+      setMessages((prev) => [...prev, { role: "assistant", content: data.error ?? `Erreur ${res.status}` }]);
+      return;
+    }
+    setMessages((prev) => [...prev, { role: "assistant", content: data.reply, meta: data }]);
+  }
+
+  function handleKeyDown(e: React.KeyboardEvent<HTMLTextAreaElement>) {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      void send();
     }
   }
 
   return (
-    <main className="min-h-screen bg-[#0a0d0b] text-stone-100">
-      <section className="border-b border-stone-800 bg-[#111611]">
-        <div className="mx-auto grid max-w-7xl gap-8 px-5 py-8 lg:grid-cols-[1.1fr_0.9fr] lg:px-8">
-          <div className="flex flex-col justify-between gap-8">
-            <div className="space-y-4">
-              <p className="text-sm font-semibold uppercase tracking-wide text-emerald-300">
-                Prototype autonome - LLM africain + agent RAG
-              </p>
-              <h1 className="max-w-4xl text-4xl font-semibold leading-tight text-white md:text-5xl">
-                Un agent qui repond avec culture locale, sources visibles et
-                incertitude assumee.
-              </h1>
-              <p className="max-w-3xl text-base leading-7 text-stone-300">
-                Le prototype sert de noyau pour un futur LLM africain : corpus
-                local, API chat, evidence pack pour Problem to Project Africa,
-                verification des sources et fallback fonctionnel sans cle API.
-              </p>
-            </div>
-
-            <div className="grid gap-3 sm:grid-cols-3">
-              <Metric label="Corpus local" value="5 fichiers" tone="green" />
-              <Metric label="API prete" value="/chat + /evidence" tone="blue" />
-              <Metric label="Mode offline" value="synthese locale" tone="amber" />
-            </div>
-          </div>
-
-          <div className="border border-stone-800 bg-[#0d1110] p-5">
-            <h2 className="text-lg font-semibold">Pipeline agent</h2>
-            <ol className="mt-4 space-y-3 text-sm text-stone-300">
-              <li>1. Comprendre la demande, le pays, le secteur et le besoin.</li>
-              <li>2. Recuperer les fragments pertinents du corpus versionne.</li>
-              <li>3. Classer les sources par fiabilite et afficher les limites.</li>
-              <li>4. Injecter le contexte dans un LLM ou synthese locale.</li>
-              <li>5. Renvoyer une reponse sourcable et reutilisable par API.</li>
-            </ol>
+    <div className="flex h-[calc(100vh-56px)] flex-col">
+      {/* Hero bar — only on empty state */}
+      {messages.length === 0 && (
+        <div className="border-b border-zinc-800 bg-zinc-900/40 px-5 py-6 lg:px-8">
+          <div className="mx-auto max-w-3xl text-center">
+            <h1 className="text-2xl font-bold text-white sm:text-3xl">
+              Bienvenue sur{" "}
+              <span className="text-emerald-400">Aisha</span>
+            </h1>
+            <p className="mt-2 text-sm text-zinc-400">
+              Agent IA spécialisé Afrique subsaharienne — sources locales vérifiées, anti-biais, RAG sémantique BM25.
+            </p>
+            {corpusStats && (
+              <div className="mt-3 flex items-center justify-center gap-4 text-xs text-zinc-500">
+                <span>{corpusStats.totalSources} sources corpus</span>
+                <span>·</span>
+                <span>{corpusStats.totalChunks} fragments indexés</span>
+                <span>·</span>
+                <span className="text-emerald-500">BM25 + Claude API</span>
+              </div>
+            )}
           </div>
         </div>
-      </section>
+      )}
 
-      <section className="mx-auto grid max-w-7xl gap-5 px-5 py-6 lg:grid-cols-[1fr_380px] lg:px-8">
-        <div className="min-h-[620px] border border-stone-800 bg-[#101413]">
-          <div className="border-b border-stone-800 p-4">
-            <div className="flex flex-wrap items-center justify-between gap-3">
-              <div>
-                <h2 className="text-xl font-semibold">Console du LLM-agent</h2>
-                <p className="mt-1 text-sm text-stone-400">
-                  Teste une question, inspecte les citations et genere un paquet
-                  de preuves pour un autre produit.
-                </p>
-              </div>
-              <div className="flex rounded-md border border-stone-700 p-1">
-                <button
-                  type="button"
-                  onClick={() => setMode("general")}
-                  className={`px-3 py-2 text-sm ${
-                    mode === "general"
-                      ? "bg-emerald-600 text-white"
-                      : "text-stone-300 hover:bg-stone-800"
-                  }`}
-                >
-                  General
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setMode("research")}
-                  className={`px-3 py-2 text-sm ${
-                    mode === "research"
-                      ? "bg-emerald-600 text-white"
-                      : "text-stone-300 hover:bg-stone-800"
-                  }`}
-                >
-                  Recherche
-                </button>
-              </div>
-            </div>
-          </div>
-
-          <div className="space-y-4 p-4">
-            <div className="flex flex-wrap gap-2">
-              {starterPrompts.map((prompt) => (
+      {/* Messages area */}
+      <div className="flex-1 overflow-y-auto px-5 py-6 lg:px-8">
+        <div className="mx-auto max-w-3xl space-y-6">
+          {messages.length === 0 && (
+            <div className="grid gap-2 sm:grid-cols-2">
+              {STARTERS.map((prompt) => (
                 <button
                   key={prompt}
-                  type="button"
-                  onClick={() => setInput(prompt)}
-                  className="border border-stone-700 px-3 py-2 text-left text-xs text-stone-300 hover:border-emerald-500 hover:text-white"
+                  onClick={() => void send(prompt)}
+                  disabled={loading}
+                  className="rounded-xl border border-zinc-800 bg-zinc-900/50 p-4 text-left text-sm text-zinc-300 hover:border-emerald-700 hover:bg-emerald-950/20 hover:text-white transition-all disabled:opacity-50"
                 >
                   {prompt}
                 </button>
               ))}
             </div>
+          )}
 
+          {messages.map((msg, i) => (
+            <MessageBlock key={i} msg={msg} />
+          ))}
+
+          {loading && !streamMode && <ThinkingDots />}
+          <div ref={bottomRef} />
+        </div>
+      </div>
+
+      {/* Input area */}
+      <div className="border-t border-zinc-800 bg-zinc-900/80 backdrop-blur px-5 py-4 lg:px-8">
+        <div className="mx-auto max-w-3xl space-y-3">
+          {/* Controls row */}
+          <div className="flex flex-wrap items-center gap-2 text-xs">
+            {/* Mode toggle */}
+            <div className="flex rounded-lg border border-zinc-700 p-0.5">
+              {(["general", "research"] as ChatMode[]).map((m) => (
+                <button
+                  key={m}
+                  onClick={() => setMode(m)}
+                  className={`px-3 py-1 rounded-md transition-colors capitalize ${
+                    mode === m
+                      ? "bg-emerald-700 text-white"
+                      : "text-zinc-400 hover:text-zinc-200"
+                  }`}
+                >
+                  {m === "general" ? "Général" : "Recherche"}
+                </button>
+              ))}
+            </div>
+
+            {/* Stream toggle */}
+            <button
+              onClick={() => setStreamMode(!streamMode)}
+              className={`flex items-center gap-1.5 rounded-lg border px-3 py-1 transition-colors ${
+                streamMode
+                  ? "border-emerald-700 bg-emerald-950/30 text-emerald-400"
+                  : "border-zinc-700 text-zinc-400"
+              }`}
+            >
+              <span className={`w-1.5 h-1.5 rounded-full ${streamMode ? "bg-emerald-400" : "bg-zinc-600"}`} />
+              Streaming
+            </button>
+
+            {/* Region boost */}
+            <input
+              type="text"
+              value={boostRegion}
+              onChange={(e) => setBoostRegion(e.target.value.toUpperCase().slice(0, 2))}
+              placeholder="Région (BF, ML…)"
+              className="w-28 rounded-lg border border-zinc-700 bg-zinc-800 px-2.5 py-1 text-xs text-zinc-300 placeholder:text-zinc-600 focus:border-emerald-600 focus:outline-none"
+            />
+          </div>
+
+          {/* Text input */}
+          <div className="flex gap-3">
             <textarea
+              ref={inputRef}
               value={input}
               onChange={(e) => setInput(e.target.value)}
-              rows={4}
-              placeholder="Pose une question sur un secteur, un probleme, une competence ou un contexte africain..."
-              className="w-full resize-y border border-stone-700 bg-[#0a0d0b] p-4 text-stone-100 placeholder:text-stone-600 focus:border-emerald-500 focus:outline-none"
+              onKeyDown={handleKeyDown}
+              rows={1}
+              placeholder="Pose une question sur l'Afrique... (Entrée pour envoyer, Shift+Entrée pour nouvelle ligne)"
+              className="flex-1 resize-none rounded-xl border border-zinc-700 bg-zinc-800 px-4 py-3 text-sm text-zinc-100 placeholder:text-zinc-600 focus:border-emerald-600 focus:outline-none min-h-[48px] max-h-32 overflow-y-auto"
+              style={{ height: "auto" }}
+              onInput={(e) => {
+                const el = e.currentTarget;
+                el.style.height = "auto";
+                el.style.height = `${Math.min(el.scrollHeight, 128)}px`;
+              }}
             />
-
-            <div className="flex flex-wrap gap-3">
-              <button
-                type="button"
-                onClick={() => void send()}
-                disabled={loading || !input.trim()}
-                className="bg-emerald-600 px-5 py-2.5 font-medium text-white disabled:opacity-40"
-              >
-                {loading ? "Analyse..." : "Envoyer a l'agent"}
-              </button>
-              <button
-                type="button"
-                onClick={() => void buildEvidence()}
-                disabled={evidenceLoading}
-                className="border border-sky-500 px-5 py-2.5 font-medium text-sky-200 disabled:opacity-40"
-              >
-                {evidenceLoading ? "Construction..." : "Generer evidence pack"}
-              </button>
-              <button
-                type="button"
-                onClick={() => {
-                  setMessages([]);
-                  setEvidence(null);
-                  setError(null);
-                }}
-                className="border border-stone-700 px-5 py-2.5 font-medium text-stone-300"
-              >
-                Reinitialiser
-              </button>
-            </div>
-
-            {error ? (
-              <p className="border border-red-900 bg-red-950/40 p-3 text-sm text-red-200">
-                {error}
-              </p>
-            ) : null}
-
-            <div className="space-y-3">
-              {messages.length === 0 ? (
-                <div className="border border-dashed border-stone-700 p-5 text-sm text-stone-400">
-                  Aucune conversation pour le moment. Lance un prompt pour voir
-                  le retrieval, les citations et la confiance agent.
-                </div>
+            <button
+              onClick={() => void send()}
+              disabled={loading || !input.trim()}
+              className="rounded-xl bg-emerald-600 px-5 py-3 text-sm font-semibold text-white hover:bg-emerald-500 disabled:opacity-40 transition-colors shrink-0"
+            >
+              {loading ? (
+                <span className="flex items-center gap-2">
+                  <span className="w-3.5 h-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                  ...
+                </span>
               ) : (
-                messages.map((message, index) => (
-                  <MessageBlock key={`${message.role}-${index}`} message={message} />
-                ))
+                "Envoyer →"
               )}
-            </div>
+            </button>
           </div>
+
+          <p className="text-center text-[10px] text-zinc-600">
+            Aisha peut se tromper. Vérifie les informations critiques auprès de sources locales.
+          </p>
         </div>
-
-        <aside className="space-y-5">
-          <Panel title="Etat du dernier tour">
-            {lastAssistant?.meta ? (
-              <div className="space-y-4">
-                <div className="grid grid-cols-2 gap-3">
-                  <Metric
-                    label="Confiance"
-                    value={pct(lastAssistant.meta.confidence)}
-                    tone="green"
-                  />
-                  <Metric
-                    label="Provider"
-                    value={lastAssistant.meta.providerUsed}
-                    tone="blue"
-                  />
-                </div>
-                <div>
-                  <h3 className="text-sm font-semibold text-stone-300">
-                    Etapes agent
-                  </h3>
-                  <ul className="mt-2 space-y-2 text-sm text-stone-400">
-                    {lastAssistant.meta.agentSteps.map((step) => (
-                      <li key={step}>{step}</li>
-                    ))}
-                  </ul>
-                </div>
-                {lastAssistant.meta.warnings.length > 0 ? (
-                  <div className="border border-amber-700 bg-amber-950/30 p-3 text-sm text-amber-100">
-                    {lastAssistant.meta.warnings.join(" ")}
-                  </div>
-                ) : null}
-              </div>
-            ) : (
-              <p className="text-sm text-stone-400">
-                Les indicateurs apparaitront apres une reponse.
-              </p>
-            )}
-          </Panel>
-
-          <Panel title="Simulation P2P">
-            <div className="space-y-3">
-              <TextField
-                label="Pays"
-                value={profile.country}
-                onChange={(value) =>
-                  setProfile((current) => ({ ...current, country: value }))
-                }
-              />
-              <TextField
-                label="Secteur"
-                value={profile.preferredSector}
-                onChange={(value) =>
-                  setProfile((current) => ({
-                    ...current,
-                    preferredSector: value,
-                  }))
-                }
-              />
-              <TextField
-                label="Competences"
-                value={profile.skills}
-                onChange={(value) =>
-                  setProfile((current) => ({ ...current, skills: value }))
-                }
-              />
-              <label className="block text-xs font-medium uppercase tracking-wide text-stone-500">
-                Probleme observe
-                <textarea
-                  value={profile.observedProblem}
-                  onChange={(event) =>
-                    setProfile((current) => ({
-                      ...current,
-                      observedProblem: event.target.value,
-                    }))
-                  }
-                  rows={3}
-                  className="mt-1 w-full resize-y border border-stone-700 bg-[#0a0d0b] p-2 text-sm normal-case tracking-normal text-stone-100 focus:border-emerald-500 focus:outline-none"
-                />
-              </label>
-              <button
-                type="button"
-                onClick={() => void buildProfileEvidence()}
-                disabled={evidenceLoading}
-                className="w-full bg-sky-600 px-4 py-2.5 text-sm font-medium text-white disabled:opacity-40"
-              >
-                Tester le pont P2P
-              </button>
-            </div>
-          </Panel>
-
-          <Panel title="Evidence pack API">
-            {evidence ? (
-              <div className="space-y-3">
-                <div className="grid grid-cols-2 gap-3">
-                  <Metric
-                    label="Confiance"
-                    value={pct(evidence.uncertainty.confidence)}
-                    tone="amber"
-                  />
-                  <Metric
-                    label="Preuves"
-                    value={String(evidence.items.length)}
-                    tone="green"
-                  />
-                </div>
-                <p className="text-xs text-stone-500">
-                  Requete: {evidence.querySummary}
-                </p>
-                <div className="space-y-2">
-                  {evidence.items.slice(0, 4).map((item) => (
-                    <div
-                      key={item.id}
-                      className="border border-stone-800 bg-[#0a0d0b] p-3"
-                    >
-                      <div className="flex items-center justify-between gap-3 text-xs">
-                        <span className="font-medium text-stone-200">
-                          {item.label}
-                        </span>
-                        <span className="text-emerald-300">
-                          {item.reliabilityScore}/100
-                        </span>
-                      </div>
-                      <p className="mt-2 line-clamp-3 text-xs leading-5 text-stone-400">
-                        {item.excerpt}
-                      </p>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            ) : (
-              <p className="text-sm text-stone-400">
-                Clique sur Generer evidence pack pour voir le JSON exploitable
-                par Problem to Project Africa.
-              </p>
-            )}
-          </Panel>
-
-          <Panel title="Politique source">
-            <ul className="space-y-2 text-sm text-stone-400">
-              <li>Sources officielles ou terrain documente en priorite.</li>
-              <li>Opinion, rumeur et synthese media marquees comme fragiles.</li>
-              <li>Incertitude visible quand le corpus ne suffit pas.</li>
-              <li>Validation humaine prevue avant ingestion massive.</li>
-            </ul>
-          </Panel>
-
-          <Panel title="Audit corpus">
-            {corpusAudit ? (
-              <div className="space-y-3">
-                <div className="grid grid-cols-2 gap-3">
-                  <Metric
-                    label="Sources"
-                    value={String(corpusAudit.totalSources)}
-                    tone="green"
-                  />
-                  <Metric
-                    label="Fragments"
-                    value={String(corpusAudit.totalChunks)}
-                    tone="blue"
-                  />
-                </div>
-                <div className="space-y-2">
-                  {corpusAudit.sources.slice(0, 4).map((source) => (
-                    <div
-                      key={source.sourceFile}
-                      className="border border-stone-800 bg-[#0a0d0b] p-3"
-                    >
-                      <div className="text-xs font-medium text-stone-200">
-                        {source.title}
-                      </div>
-                      <div className="mt-2 flex flex-wrap gap-2 text-xs text-stone-500">
-                        <span>{source.region}</span>
-                        <span>{source.sourceType}</span>
-                        <span>{source.chunks} fragments</span>
-                        <span className="text-emerald-300">
-                          {source.credibilityScore}/100
-                        </span>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            ) : (
-              <p className="text-sm text-stone-400">
-                Chargement de la liste des sources.
-              </p>
-            )}
-          </Panel>
-        </aside>
-      </section>
-    </main>
-  );
-}
-
-function MessageBlock({ message }: { message: UiMessage }) {
-  const isUser = message.role === "user";
-
-  return (
-    <article
-      className={`border p-4 ${
-        isUser
-          ? "border-stone-700 bg-[#151817]"
-          : "border-emerald-900 bg-[#0b1511]"
-      }`}
-    >
-      <div className="mb-3 text-xs font-semibold uppercase tracking-wide text-stone-500">
-        {isUser ? "Utilisateur" : "Agent"}
       </div>
-      <div className="whitespace-pre-wrap text-sm leading-6 text-stone-200">
-        {message.content}
-      </div>
-      {message.meta?.citations.length ? (
-        <div className="mt-4 border-t border-stone-800 pt-4">
-          <h3 className="text-sm font-semibold text-stone-300">
-            Sources recuperees
-          </h3>
-          <div className="mt-3 grid gap-3 md:grid-cols-2">
-            {message.meta.citations.map((citation) => (
-              <div
-                key={citation.id}
-                className="border border-stone-800 bg-[#0a0d0b] p-3"
-              >
-                <div className="flex flex-wrap gap-2 text-xs text-stone-500">
-                  <span className="font-mono text-emerald-300">
-                    {citation.id}
-                  </span>
-                  <span>{citation.region ?? "region ouverte"}</span>
-                  <span>{citation.credibilityScore}/100</span>
-                </div>
-                <p className="mt-2 text-xs leading-5 text-stone-400">
-                  {citation.excerpt}
-                </p>
-              </div>
-            ))}
-          </div>
-        </div>
-      ) : null}
-    </article>
-  );
-}
-
-function TextField({
-  label,
-  value,
-  onChange,
-}: {
-  label: string;
-  value: string;
-  onChange: (value: string) => void;
-}) {
-  return (
-    <label className="block text-xs font-medium uppercase tracking-wide text-stone-500">
-      {label}
-      <input
-        value={value}
-        onChange={(event) => onChange(event.target.value)}
-        className="mt-1 w-full border border-stone-700 bg-[#0a0d0b] p-2 text-sm normal-case tracking-normal text-stone-100 focus:border-emerald-500 focus:outline-none"
-      />
-    </label>
-  );
-}
-
-function Panel({
-  title,
-  children,
-}: {
-  title: string;
-  children: ReactNode;
-}) {
-  return (
-    <section className="border border-stone-800 bg-[#101413] p-4">
-      <h2 className="mb-3 text-base font-semibold text-stone-100">{title}</h2>
-      {children}
-    </section>
-  );
-}
-
-function Metric({
-  label,
-  value,
-  tone,
-}: {
-  label: string;
-  value: string;
-  tone: "green" | "blue" | "amber";
-}) {
-  const color =
-    tone === "green"
-      ? "text-emerald-300"
-      : tone === "blue"
-        ? "text-sky-300"
-        : "text-amber-300";
-
-  return (
-    <div className="border border-stone-800 bg-[#0a0d0b] p-3">
-      <div className="text-xs uppercase tracking-wide text-stone-500">
-        {label}
-      </div>
-      <div className={`mt-1 text-sm font-semibold ${color}`}>{value}</div>
     </div>
   );
 }
