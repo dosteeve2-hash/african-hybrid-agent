@@ -23,6 +23,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 <NavLink href="/">Chat</NavLink>
                 <NavLink href="/corpus">Corpus</NavLink>
                 <NavLink href="/monitoring">Analytics</NavLink>
+                <NavLink href="/hub">Hub</NavLink>
                 <NavLink href="/test">API</NavLink>
               </div>
             </div>

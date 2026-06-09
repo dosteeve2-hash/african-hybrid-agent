@@ -15,7 +15,7 @@ export type Citation = {
   title?: string;
 };
 
-export type LLMProvider = "claude" | "openai" | "openai-compatible" | "local-synthesis";
+export type LLMProvider = "ollama" | "claude" | "openai" | "openai-compatible" | "local-synthesis";
 
 export type ChatResponseBody = {
   reply: string;

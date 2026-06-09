@@ -1,6 +1,7 @@
 import { buildAgentSystemPrompt } from "@/lib/agent/system-prompt";
 import {
   generateResponse,
+  streamWithOllama,
   streamWithClaude,
   synthesizeLocally,
 } from "@/lib/llm/generate";
@@ -135,11 +136,13 @@ export async function runAgentTurn(
   agentSteps.push(`Génération via ${llmResult.provider} (${llmResult.model}) en ${generationMs}ms.`);
 
   const providerUsed: import("@/lib/types/chat").LLMProvider =
-    llmResult.provider === "claude"
-      ? "claude"
-      : llmResult.provider === "openai"
-        ? "openai-compatible"
-        : "local-synthesis";
+    llmResult.provider === "ollama"
+      ? "ollama"
+      : llmResult.provider === "claude"
+        ? "claude"
+        : llmResult.provider === "openai"
+          ? "openai-compatible"
+          : "local-synthesis";
 
   const responseAudit: ResponseAudit = {
     queryText: query,
@@ -206,24 +209,42 @@ export async function* streamAgentTurn(
   const system = buildAgentSystemPrompt(mode);
   const conv = toConversation(params.messages);
 
+  const hasOllama = !!process.env.OLLAMA_URL || true; // always try Ollama first
   const hasAnthropicKey = !!process.env.ANTHROPIC_API_KEY?.trim();
-  const t1 = performance.now();
+  let streamProvider: import("@/lib/types/chat").LLMProvider = "local-synthesis";
 
-  if (hasAnthropicKey) {
-    try {
-      for await (const chunk of streamWithClaude({
-        system,
-        userMessages: conv,
-        corpusChunks: retrieved,
-        model: params.options?.model,
-      })) {
-        yield { type: "text", content: chunk };
-      }
-    } catch (e) {
-      // Fall through to local synthesis on error
-      yield { type: "text", content: synthesizeLocally(query, retrieved) };
+  // Priority: Ollama (local) → Claude → local synthesis
+  let streamed = false;
+  try {
+    for await (const chunk of streamWithOllama({
+      system,
+      userMessages: conv,
+      corpusChunks: retrieved,
+      model: params.options?.model,
+    })) {
+      if (!streamed) { streamed = true; streamProvider = "ollama"; }
+      yield { type: "text", content: chunk };
     }
-  } else {
+  } catch {
+    // Ollama not running — try Claude
+    if (hasAnthropicKey) {
+      try {
+        for await (const chunk of streamWithClaude({
+          system,
+          userMessages: conv,
+          corpusChunks: retrieved,
+          model: params.options?.model,
+        })) {
+          if (!streamed) { streamed = true; streamProvider = "claude"; }
+          yield { type: "text", content: chunk };
+        }
+      } catch {
+        // fall through
+      }
+    }
+  }
+
+  if (!streamed) {
     yield { type: "text", content: synthesizeLocally(query, retrieved) };
   }
 
@@ -234,13 +255,13 @@ export async function* streamAgentTurn(
     type: "done",
     meta: {
       chunks: retrieved.map((c) => c.id),
-      providerUsed: hasAnthropicKey ? "claude" : "local-synthesis",
+      providerUsed: streamProvider,
       mode,
-      warnings: !hasAnthropicKey ? ["Aucune clé API — synthèse locale."] : [],
+      warnings: streamProvider === "local-synthesis" ? ["Ollama non disponible et aucune clé API — synthèse locale."] : [],
       confidence,
       agentSteps: [
         `BM25 retrieval: ${retrieved.length}/${corpus.length} chunks.`,
-        `Génération via ${hasAnthropicKey ? "Claude (streaming)" : "synthèse locale"}.`,
+        `Génération via ${streamProvider} (streaming).`,
         `Total: ${totalMs}ms.`,
       ],
       perf: { totalMs },

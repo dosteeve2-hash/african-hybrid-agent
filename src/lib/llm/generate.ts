@@ -12,7 +12,7 @@ function getAnthropic(): Anthropic {
   return _anthropic;
 }
 
-type LLMResult = { text: string; model: string; provider: "claude" | "openai" | "local" };
+type LLMResult = { text: string; model: string; provider: "ollama" | "claude" | "openai" | "openai-compatible" | "local-synthesis" };
 
 // ── Context formatting ────────────────────────────────────────────────────────
 
@@ -28,6 +28,100 @@ function formatContext(chunks: CorpusChunk[]): string {
       .join("\n\n---\n\n") +
     "\n---"
   );
+}
+
+// ── Ollama (local sovereign LLM — primary) ────────────────────────────────────
+
+export async function generateWithOllama(params: {
+  system: string;
+  userMessages: { role: "user" | "assistant"; content: string }[];
+  corpusChunks: CorpusChunk[];
+  model?: string;
+}): Promise<LLMResult | null> {
+  const base = (process.env.OLLAMA_URL?.trim() ?? "http://localhost:11434").replace(/\/$/, "");
+  const model = params.model ?? process.env.OLLAMA_MODEL?.trim() ?? "llama3.2";
+  const systemWithContext = params.system + formatContext(params.corpusChunks);
+
+  let res: Response;
+  try {
+    res = await fetch(`${base}/v1/chat/completions`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        model,
+        temperature: 0.3,
+        messages: [
+          { role: "system", content: systemWithContext },
+          ...params.userMessages,
+        ],
+      }),
+      // short timeout — if Ollama isn't running, fail fast
+      signal: AbortSignal.timeout(30_000),
+    });
+  } catch {
+    return null; // Ollama not running — fall through to cloud
+  }
+
+  if (!res.ok) return null;
+
+  const data = (await res.json()) as { choices?: { message?: { content?: string } }[] };
+  const text = data.choices?.[0]?.message?.content?.trim();
+  if (!text) return null;
+  return { text, model, provider: "ollama" };
+}
+
+export async function* streamWithOllama(params: {
+  system: string;
+  userMessages: { role: "user" | "assistant"; content: string }[];
+  corpusChunks: CorpusChunk[];
+  model?: string;
+}): AsyncGenerator<string> {
+  const base = (process.env.OLLAMA_URL?.trim() ?? "http://localhost:11434").replace(/\/$/, "");
+  const model = params.model ?? process.env.OLLAMA_MODEL?.trim() ?? "llama3.2";
+  const systemWithContext = params.system + formatContext(params.corpusChunks);
+
+  let res: Response;
+  try {
+    res = await fetch(`${base}/v1/chat/completions`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        model,
+        temperature: 0.3,
+        stream: true,
+        messages: [
+          { role: "system", content: systemWithContext },
+          ...params.userMessages,
+        ],
+      }),
+      signal: AbortSignal.timeout(60_000),
+    });
+  } catch {
+    throw new Error("Ollama non disponible. Lance: ollama serve");
+  }
+
+  if (!res.ok || !res.body) throw new Error(`Ollama HTTP ${res.status}`);
+
+  const reader = res.body.getReader();
+  const decoder = new TextDecoder();
+
+  while (true) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    const chunk = decoder.decode(value, { stream: true });
+    for (const line of chunk.split("\n")) {
+      if (!line.startsWith("data: ")) continue;
+      const raw = line.slice(6).trim();
+      if (raw === "[DONE]") return;
+      try {
+        const parsed = JSON.parse(raw) as { choices?: { delta?: { content?: string } }[] };
+        const token = parsed.choices?.[0]?.delta?.content;
+        if (token) yield token;
+      } catch {
+        // malformed SSE line — skip
+      }
+    }
+  }
 }
 
 // ── Claude API ────────────────────────────────────────────────────────────────
@@ -141,11 +235,11 @@ export function synthesizeLocally(query: string, chunks: CorpusChunk[]): string 
   if (chunks.length === 0) {
     return (
       `Je n'ai trouvé aucun extrait pertinent dans le corpus pour : "${query}".\n\n` +
-      `Pour améliorer les résultats : ajoute des fichiers .md dans data/corpus/ ou configure ANTHROPIC_API_KEY / OPENAI_API_KEY.`
+      `Pour activer le LLM local : installe Ollama (https://ollama.com) et lance \`ollama pull llama3.2\`.`
     );
   }
 
-  const intro = `Synthèse locale (sans LLM externe) — extraits bruts du corpus africain.\n\n`;
+  const intro = `Synthèse locale (corpus africain — sans LLM externe).\n\n`;
   const body = chunks
     .map(
       (c, i) =>
@@ -157,6 +251,7 @@ export function synthesizeLocally(query: string, chunks: CorpusChunk[]): string 
 }
 
 // ── Primary entry point ───────────────────────────────────────────────────────
+// Priority: Ollama (local, sovereign) → Claude → OpenAI → local synthesis
 
 export async function generateResponse(params: {
   system: string;
@@ -164,7 +259,17 @@ export async function generateResponse(params: {
   corpusChunks: CorpusChunk[];
   preferClaude?: boolean;
 }): Promise<LLMResult> {
-  // Try Claude first
+  // 1. Ollama — local, sovereign, no API key needed
+  if (!params.preferClaude) {
+    try {
+      const result = await generateWithOllama(params);
+      if (result) return result;
+    } catch (e) {
+      console.error("[generate] Ollama failed:", (e as Error).message);
+    }
+  }
+
+  // 2. Claude — cloud fallback
   try {
     const result = await generateWithClaude(params);
     if (result) return result;
@@ -172,7 +277,7 @@ export async function generateResponse(params: {
     console.error("[generate] Claude failed:", (e as Error).message);
   }
 
-  // Fallback to OpenAI
+  // 3. OpenAI — last cloud resort
   try {
     const result = await generateWithOpenAI(params);
     if (result) return result;
@@ -180,12 +285,12 @@ export async function generateResponse(params: {
     console.error("[generate] OpenAI failed:", (e as Error).message);
   }
 
-  // Local synthesis
+  // 4. Local corpus synthesis — always works offline
   const lastUser = [...params.userMessages].reverse().find((m) => m.role === "user");
   return {
     text: synthesizeLocally(lastUser?.content ?? "", params.corpusChunks),
     model: "local-synthesis",
-    provider: "local",
+    provider: "local-synthesis",
   };
 }
 
@@ -196,7 +301,7 @@ export async function generateOpenAICompatible(params: {
   corpusChunks: CorpusChunk[];
 }): Promise<{ text: string } | null> {
   const result = await generateResponse(params);
-  return result.provider !== "local" ? { text: result.text } : null;
+  return result.provider !== "local-synthesis" ? { text: result.text } : null;
 }
 
 export { synthesizeLocally as synthesizeWithoutLLM };
