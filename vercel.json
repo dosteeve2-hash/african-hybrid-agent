@@ -1,17 +1,9 @@
 {
-  "buildCommand": "npm run build && npm run generate-embeddings",
+  "buildCommand": "npm run build",
   "outputDirectory": ".next",
   "framework": "nextjs",
-  "nodeVersion": "18.x",
-  "env": {
-    "NODE_ENV": "production",
-    "REDIS_URL": "@redis_url",
-    "DATABASE_URL": "@database_url",
-    "OPENAI_API_KEY": "@openai_api_key",
-    "AGENT_API_KEY": "@agent_api_key"
-  },
   "functions": {
-    "api/**/*.ts": {
+    "src/app/api/**/*.ts": {
       "maxDuration": 60
     }
   }
