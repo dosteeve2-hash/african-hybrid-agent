@@ -7,3 +7,10 @@
 .DS_Store
 .vscode/
 .vercel
+
+# build artifacts
+*.tsbuildinfo
+
+# test outputs
+test_output*.txt
+test_results.*
