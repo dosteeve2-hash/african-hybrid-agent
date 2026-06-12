@@ -1,15 +1,52 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600..800;1,600..800&family=Outfit:wght@300..700&family=JetBrains+Mono:wght@400;500&display=swap');
 @import "tailwindcss";
 
+/* Charte STEEVE.DO — « Nuit Sahélienne & Or » v1.0 */
 :root {
-  --bg: #09090b;
-  --surface: #111113;
-  --surface-2: #18181b;
-  --border: #27272a;
-  --accent: #10b981;
-  --accent-dim: #065f46;
-  --text: #fafafa;
-  --muted: #71717a;
-  --muted-2: #a1a1aa;
+  --bg:      #070E1F;
+  --bg2:     #0C1528;
+  --bg3:     #111D34;
+  --surface: #0C1528;
+  --surface-2: #111D34;
+  --border:  #16233D;
+  --border2: #1F3054;
+  --gold:    #F0A832;
+  --gold2:   #F7C060;
+  --gold3:   #C07D10;
+  --accent:  #F0A832;
+  --accent-dim: #C07D10;
+  --text:    #F5F0E8;
+  --text2:   #9BA8C4;
+  --text3:   #4E5F82;
+  --muted:   #4E5F82;
+  --muted-2: #9BA8C4;
+  --cyan:    #2DD4FF;
+  --green:   #22D98A;
+  --red:     #EF4444;
+}
+
+/* Remap Tailwind : emerald → Or, zinc → Nuit (charte STEEVE.DO) */
+@theme {
+  --color-emerald-100: #FBE3B5;
+  --color-emerald-200: #F7C060;
+  --color-emerald-300: #F7C060;
+  --color-emerald-400: #F4B446;
+  --color-emerald-500: #F0A832;
+  --color-emerald-600: #C07D10;
+  --color-emerald-700: #9A640D;
+  --color-emerald-800: #6E470A;
+  --color-emerald-900: #4A3206;
+  --color-emerald-950: #2E1F04;
+  --color-zinc-100: #F5F0E8;
+  --color-zinc-200: #DDE3EF;
+  --color-zinc-300: #C7CFDF;
+  --color-zinc-400: #9BA8C4;
+  --color-zinc-500: #6B7BA0;
+  --color-zinc-600: #4E5F82;
+  --color-zinc-700: #1F3054;
+  --color-zinc-800: #172240;
+  --color-zinc-900: #0C1528;
+  --color-zinc-950: #070E1F;
 }
 
 * {
@@ -19,6 +56,11 @@
 body {
   background: var(--bg);
   color: var(--text);
+  font-family: 'Outfit', system-ui, sans-serif;
+}
+
+h1, h2 {
+  font-family: 'Playfair Display', Georgia, serif;
 }
 
 /* Streaming text cursor */
@@ -34,15 +76,18 @@ body {
   font-size: 0.85em;
 }
 
+/* Text selection */
+::selection { background: var(--gold); color: var(--bg); }
+
 /* Custom scrollbar */
-::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar { width: 3px; height: 3px; }
 ::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
-::-webkit-scrollbar-thumb:hover { background: #3f3f46; }
+::-webkit-scrollbar-thumb { background: var(--gold); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--gold2); }
 
 /* Markdown in chat */
 .prose-african h1, .prose-african h2, .prose-african h3 {
-  color: #f4f4f5;
+  color: #F5F0E8;
   margin-top: 1rem;
   margin-bottom: 0.5rem;
   font-weight: 600;
@@ -50,10 +95,10 @@ body {
 .prose-african p { margin-bottom: 0.75rem; line-height: 1.7; }
 .prose-african ul, .prose-african ol { margin-left: 1.25rem; margin-bottom: 0.75rem; }
 .prose-african li { margin-bottom: 0.25rem; }
-.prose-african strong { color: #e4e4e7; }
-.prose-african em { color: #a1a1aa; }
+.prose-african strong { color: #F5F0E8; }
+.prose-african em { color: #9BA8C4; }
 .prose-african code {
-  background: #27272a;
+  background: #172240;
   padding: 0.1em 0.3em;
   border-radius: 3px;
   font-size: 0.85em;

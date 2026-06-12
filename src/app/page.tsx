@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { marked } from "marked";
+import { BrandMotion } from "@/components/motion/brand-motion";
 import type { ChatMessage, ChatMode, ChatResponseBody, Citation, StreamChunk } from "@/lib/types/chat";
 
 // ── Types ─────────────────────────────────────────────────────────────────────
@@ -103,7 +104,9 @@ function MessageBlock({ msg }: { msg: UiMessage }) {
       {/* Avatar */}
       <div
         className={`shrink-0 w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold ${
-          isUser ? "bg-zinc-700 text-zinc-300" : "bg-emerald-900 text-emerald-300"
+          isUser
+            ? "bg-[var(--bg3)] border border-[var(--border2)] font-mono text-[var(--text2)]"
+            : "bg-[var(--gold)] text-[var(--bg)] font-serif italic"
         }`}
       >
         {isUser ? "U" : "A"}
@@ -114,8 +117,8 @@ function MessageBlock({ msg }: { msg: UiMessage }) {
         <div
           className={`rounded-xl px-4 py-3 max-w-prose ${
             isUser
-              ? "bg-emerald-900/30 border border-emerald-800 text-zinc-100 text-sm"
-              : "bg-zinc-900 border border-zinc-800 text-zinc-200 text-sm"
+              ? "bg-[var(--gold)]/10 border border-[var(--gold)]/25 text-[var(--text)] text-sm"
+              : "bg-[var(--bg3)] border border-[var(--border2)] text-[var(--text2)] text-sm"
           } ${msg.streaming ? "cursor-blink" : ""}`}
         >
           {isUser ? (
@@ -131,7 +134,7 @@ function MessageBlock({ msg }: { msg: UiMessage }) {
         {/* Citations */}
         {!isUser && msg.meta?.citations && msg.meta.citations.length > 0 && !msg.streaming && (
           <div className="w-full space-y-1.5">
-            <p className="text-[11px] font-medium uppercase tracking-wider text-zinc-500">
+            <p className="font-mono text-[11px] uppercase tracking-wider text-[var(--text3)]">
               {msg.meta.citations.length} source{msg.meta.citations.length > 1 ? "s" : ""} récupérée{msg.meta.citations.length > 1 ? "s" : ""}
             </p>
             <div className="grid gap-1.5 sm:grid-cols-2">
@@ -144,11 +147,11 @@ function MessageBlock({ msg }: { msg: UiMessage }) {
 
         {/* Metadata bar */}
         {!isUser && msg.meta && !msg.streaming && (
-          <div className="flex flex-wrap items-center gap-3 text-[11px] text-zinc-500">
+          <div className="flex flex-wrap items-center gap-3 font-mono text-[11px] text-[var(--text3)]">
             {msg.meta.confidence !== undefined && (
               <span>
                 Confiance:{" "}
-                <span className={msg.meta.confidence >= 0.6 ? "text-emerald-400" : "text-amber-400"}>
+                <span className={msg.meta.confidence >= 0.6 ? "text-[var(--green)]" : "text-amber-400"}>
                   {Math.round(msg.meta.confidence * 100)}%
                 </span>
               </span>
@@ -156,7 +159,7 @@ function MessageBlock({ msg }: { msg: UiMessage }) {
             {msg.meta.providerUsed && (
               <span>
                 via{" "}
-                <span className="text-zinc-400">{msg.meta.providerUsed}</span>
+                <span className="text-[var(--text2)]">{msg.meta.providerUsed}</span>
               </span>
             )}
             {msg.meta.perf?.totalMs && (
@@ -181,15 +184,15 @@ function MessageBlock({ msg }: { msg: UiMessage }) {
 function ThinkingDots() {
   return (
     <div className="flex gap-3">
-      <div className="shrink-0 w-8 h-8 rounded-full bg-emerald-900 flex items-center justify-center text-xs font-bold text-emerald-300">
+      <div className="shrink-0 w-8 h-8 rounded-full bg-[var(--gold)] flex items-center justify-center text-xs font-bold font-serif italic text-[var(--bg)]">
         A
       </div>
-      <div className="rounded-xl border border-zinc-800 bg-zinc-900 px-4 py-3">
+      <div className="rounded-xl border border-[var(--border2)] bg-[var(--bg3)] px-4 py-3">
         <div className="flex items-center gap-1.5">
           {[0, 1, 2].map((i) => (
             <span
               key={i}
-              className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-bounce"
+              className="w-1.5 h-1.5 rounded-full bg-[var(--gold)] animate-bounce"
               style={{ animationDelay: `${i * 0.15}s` }}
             />
           ))}
@@ -348,24 +351,25 @@ export default function Home() {
 
   return (
     <div className="flex h-[calc(100vh-56px)] flex-col">
+      <BrandMotion />
       {/* Hero bar — only on empty state */}
       {messages.length === 0 && (
-        <div className="border-b border-zinc-800 bg-zinc-900/40 px-5 py-6 lg:px-8">
+        <div className="border-b border-[var(--border)] bg-[var(--bg2)]/60 px-5 py-6 lg:px-8">
           <div className="mx-auto max-w-3xl text-center">
-            <h1 className="text-2xl font-bold text-white sm:text-3xl">
+            <h1 data-hero="1" className="text-2xl font-bold text-[var(--text)] sm:text-3xl">
               Bienvenue sur{" "}
-              <span className="text-emerald-400">Aisha</span>
+              <span className="font-serif italic text-[var(--gold)]">Aisha</span>
             </h1>
-            <p className="mt-2 text-sm text-zinc-400">
+            <p data-hero="2" className="mt-2 text-sm text-[var(--text2)]">
               Agent IA spécialisé Afrique subsaharienne — sources locales vérifiées, anti-biais, RAG sémantique BM25.
             </p>
             {corpusStats && (
-              <div className="mt-3 flex items-center justify-center gap-4 text-xs text-zinc-500">
+              <div className="mt-3 flex items-center justify-center gap-4 font-mono text-xs text-[var(--text3)]">
                 <span>{corpusStats.totalSources} sources corpus</span>
                 <span>·</span>
                 <span>{corpusStats.totalChunks} fragments indexés</span>
                 <span>·</span>
-                <span className="text-emerald-500">BM25 + Claude API</span>
+                <span className="text-[var(--gold)]">BM25 + Claude API</span>
               </div>
             )}
           </div>
@@ -376,13 +380,13 @@ export default function Home() {
       <div className="flex-1 overflow-y-auto px-5 py-6 lg:px-8">
         <div className="mx-auto max-w-3xl space-y-6">
           {messages.length === 0 && (
-            <div className="grid gap-2 sm:grid-cols-2">
+            <div data-reveal-group className="grid gap-2 sm:grid-cols-2">
               {STARTERS.map((prompt) => (
                 <button
                   key={prompt}
                   onClick={() => void send(prompt)}
                   disabled={loading}
-                  className="rounded-xl border border-zinc-800 bg-zinc-900/50 p-4 text-left text-sm text-zinc-300 hover:border-emerald-700 hover:bg-emerald-950/20 hover:text-white transition-all disabled:opacity-50"
+                  className="rounded-xl border border-[var(--border2)] bg-[var(--bg3)]/60 p-4 text-left text-sm text-[var(--text2)] hover:border-[var(--gold)]/50 hover:bg-[var(--gold)]/5 hover:text-[var(--text)] transition-all disabled:opacity-50"
                 >
                   {prompt}
                 </button>
@@ -400,20 +404,20 @@ export default function Home() {
       </div>
 
       {/* Input area */}
-      <div className="border-t border-zinc-800 bg-zinc-900/80 backdrop-blur px-5 py-4 lg:px-8">
+      <div className="border-t border-[var(--border)] bg-[var(--bg2)]/90 backdrop-blur px-5 py-4 lg:px-8">
         <div className="mx-auto max-w-3xl space-y-3">
           {/* Controls row */}
           <div className="flex flex-wrap items-center gap-2 text-xs">
             {/* Mode toggle */}
-            <div className="flex rounded-lg border border-zinc-700 p-0.5">
+            <div className="flex rounded-lg border border-[var(--border2)] p-0.5">
               {(["general", "research"] as ChatMode[]).map((m) => (
                 <button
                   key={m}
                   onClick={() => setMode(m)}
-                  className={`px-3 py-1 rounded-md transition-colors capitalize ${
+                  className={`px-3 py-1 rounded-md transition-colors font-mono text-[11px] uppercase tracking-wider ${
                     mode === m
-                      ? "bg-emerald-700 text-white"
-                      : "text-zinc-400 hover:text-zinc-200"
+                      ? "bg-[var(--gold)] text-[var(--bg)] font-bold"
+                      : "text-[var(--text3)] hover:text-[var(--text2)]"
                   }`}
                 >
                   {m === "general" ? "Général" : "Recherche"}
@@ -424,13 +428,13 @@ export default function Home() {
             {/* Stream toggle */}
             <button
               onClick={() => setStreamMode(!streamMode)}
-              className={`flex items-center gap-1.5 rounded-lg border px-3 py-1 transition-colors ${
+              className={`flex items-center gap-1.5 rounded-lg border px-3 py-1 font-mono text-[11px] uppercase tracking-wider transition-colors ${
                 streamMode
-                  ? "border-emerald-700 bg-emerald-950/30 text-emerald-400"
-                  : "border-zinc-700 text-zinc-400"
+                  ? "border-[var(--gold)]/40 bg-[var(--gold)]/10 text-[var(--gold)]"
+                  : "border-[var(--border2)] text-[var(--text3)]"
               }`}
             >
-              <span className={`w-1.5 h-1.5 rounded-full ${streamMode ? "bg-emerald-400" : "bg-zinc-600"}`} />
+              <span className={`w-1.5 h-1.5 rounded-full ${streamMode ? "bg-[var(--gold)]" : "bg-[var(--text3)]"}`} />
               Streaming
             </button>
 
@@ -440,7 +444,7 @@ export default function Home() {
               value={boostRegion}
               onChange={(e) => setBoostRegion(e.target.value.toUpperCase().slice(0, 2))}
               placeholder="Région (BF, ML…)"
-              className="w-28 rounded-lg border border-zinc-700 bg-zinc-800 px-2.5 py-1 text-xs text-zinc-300 placeholder:text-zinc-600 focus:border-emerald-600 focus:outline-none"
+              className="w-28 rounded-lg border border-[var(--border2)] bg-[var(--bg3)] px-2.5 py-1 font-mono text-xs text-[var(--text2)] placeholder:text-[var(--text3)] focus:border-[var(--gold)] focus:outline-none transition-colors"
             />
           </div>
 
@@ -453,7 +457,7 @@ export default function Home() {
               onKeyDown={handleKeyDown}
               rows={1}
               placeholder="Pose une question sur l'Afrique... (Entrée pour envoyer, Shift+Entrée pour nouvelle ligne)"
-              className="flex-1 resize-none rounded-xl border border-zinc-700 bg-zinc-800 px-4 py-3 text-sm text-zinc-100 placeholder:text-zinc-600 focus:border-emerald-600 focus:outline-none min-h-[48px] max-h-32 overflow-y-auto"
+              className="flex-1 resize-none rounded-xl border border-[var(--border2)] bg-[var(--bg3)] px-4 py-3 text-sm text-[var(--text)] placeholder:text-[var(--text3)] focus:border-[var(--gold)] focus:outline-none min-h-[48px] max-h-32 overflow-y-auto transition-colors"
               style={{ height: "auto" }}
               onInput={(e) => {
                 const el = e.currentTarget;
@@ -464,7 +468,7 @@ export default function Home() {
             <button
               onClick={() => void send()}
               disabled={loading || !input.trim()}
-              className="rounded-xl bg-emerald-600 px-5 py-3 text-sm font-semibold text-white hover:bg-emerald-500 disabled:opacity-40 transition-colors shrink-0"
+              className="rounded-xl bg-[var(--gold)] px-5 py-3 text-sm font-semibold text-[var(--bg)] hover:bg-[var(--gold2)] disabled:opacity-40 transition-colors shrink-0"
             >
               {loading ? (
                 <span className="flex items-center gap-2">
@@ -477,7 +481,7 @@ export default function Home() {
             </button>
           </div>
 
-          <p className="text-center text-[10px] text-zinc-600">
+          <p className="text-center font-mono text-[10px] text-[var(--text3)]">
             Aisha peut se tromper. Vérifie les informations critiques auprès de sources locales.
           </p>
         </div>

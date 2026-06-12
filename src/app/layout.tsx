@@ -12,14 +12,16 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="fr">
       <body className="min-h-screen antialiased">
-        <nav className="border-b border-stone-800 bg-[#0a0a08]/95 backdrop-blur-sm sticky top-0 z-50">
+        <nav className="sticky top-0 z-50 border-b border-[var(--border)] bg-[var(--bg2)]/95 backdrop-blur-sm">
           <div className="mx-auto max-w-7xl px-5 lg:px-8">
             <div className="flex h-14 items-center justify-between">
               <Link href="/" className="flex items-center gap-2.5">
-                <span className="text-lg font-bold text-emerald-400 tracking-tight">Aisha</span>
-                <span className="hidden text-xs text-stone-500 sm:block">Agent IA · Afrique subsaharienne</span>
+                <span className="font-serif italic text-lg font-bold text-[var(--gold)]">Aisha</span>
+                <span className="hidden font-mono text-[10px] uppercase tracking-widest text-[var(--text3)] sm:block">
+                  Agent IA · Afrique subsaharienne
+                </span>
               </Link>
-              <div className="flex items-center gap-1">
+              <div className="flex items-center gap-0.5">
                 <NavLink href="/">Chat</NavLink>
                 <NavLink href="/corpus">Corpus</NavLink>
                 <NavLink href="/monitoring">Analytics</NavLink>
@@ -39,7 +41,7 @@ function NavLink({ href, children }: { href: string; children: React.ReactNode }
   return (
     <Link
       href={href}
-      className="px-3 py-1.5 text-sm text-stone-400 hover:text-white hover:bg-stone-800 rounded transition-colors"
+      className="rounded px-3 py-1.5 font-mono text-[11px] uppercase tracking-widest text-[var(--text3)] transition-colors hover:bg-[var(--bg3)] hover:text-[var(--gold)]"
     >
       {children}
     </Link>
