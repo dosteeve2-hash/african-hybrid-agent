@@ -1,398 +1,220 @@
-# Agent Hybride Africain v0.2
+<div align="center">
 
-Prototype autonome pour un **LLM africain fiable** : interface intégrée, API riche, corpus local versionné, RAG sémantique, gouvernance des sources, et paquets de preuves pour Problem to Project Africa.
+# 🌍 African Hybrid AI Agent
 
-## Vision
+### *Le premier agent IA hybride conçu pour et par l'Afrique*
 
-Créer un assistant intelligent qui :
-- 🌍 **Connaît l'Afrique** sans biais occidental
-- 🎯 **Aide les entrepreneurs** locaux à transformer problèmes en projets viables
-- 📊 **Cite sources fiables** : gouvernance stricte, audit trail complet
-- 🤝 **Intègre Problem to Project Africa** : injection de contexte + profils utilisateur
-- 🔄 **Apprend localement** : corpus versionnée, pas de surveillance occidentale
+[![Next.js](https://img.shields.io/badge/Next.js-16-black?style=for-the-badge&logo=next.js)](https://nextjs.org/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?style=for-the-badge&logo=typescript)](https://www.typescriptlang.org/)
+[![Claude API](https://img.shields.io/badge/Anthropic-Claude-D97757?style=for-the-badge)](https://anthropic.com/)
+[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-pgvector-336791?style=for-the-badge&logo=postgresql)](https://www.postgresql.org/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-F0A832?style=for-the-badge)](./LICENSE)
+
+**[🌐 Live Demo](https://burkinacollect.vercel.app)** · **[📖 API Reference](docs/API_REFERENCE.md)** · **[🐛 Report Bug](https://github.com/dosteeve2-hash/african-hybrid-agent/issues)**
+
+</div>
 
 ---
 
-## Demarrage rapide
+## ✨ À propos
 
-### Installation
+**African Hybrid Agent** est un agent IA hybride conçu pour répondre sans biais occidental aux besoins d'information des entrepreneurs et citoyens africains. Il s'appuie sur un corpus local versionné (gouvernance, agriculture, entrepreneuriat, numérique) et intègre une gouvernance stricte des sources.
+
+Ce projet est le moteur de contexte de **[Problem to Project Africa](https://problem-to-projects-africa.vercel.app)** : il génère des "Evidence Packs" — des paquets de preuves contextuelles pour transformer des idées en projets financables.
+
+---
+
+## 🎯 Fonctionnalités
+
+- ✅ **RAG Sémantique** — TF-IDF + similarité cosinus + dictionnaire de synonymes africains
+- ✅ **Evidence Pack** — Génération de preuves contextuelles pour Problem to Project Africa
+- ✅ **Gouvernance stricte** — Scoring de crédibilité par source (official/high/medium/low)
+- ✅ **Corpus versionné** — ~256 chunks sur gouvernance, agriculture, entrepreneuriat, numérique
+- ✅ **Boost géographique** — Priorisation des sources locales (BF, ML, SN, CI, GH...)
+- ✅ **Audit trail** — Logs complets, tracabilité de chaque réponse
+- ✅ **API REST complète** — Chat, Evidence, Corpus, Health, Audit
+- ✅ **Tests Jest** — Coverage sur les modules critiques
+- 🚧 **pgvector** — Embeddings persistants (en développement)
+- 🚧 **Multi-langue** — Mooré, Dioula, Bambara (planifié)
+
+---
+
+## 🛠️ Stack technique
+
+| Technologie | Rôle |
+|-------------|------|
+| [Next.js 16](https://nextjs.org/) | Framework + API Route Handlers |
+| [TypeScript 5](https://www.typescriptlang.org/) | Typage strict |
+| [Anthropic Claude API](https://anthropic.com/) | Génération de texte LLM |
+| [PostgreSQL + pg](https://www.postgresql.org/) | Stockage corpus + metadata |
+| [Redis](https://redis.io/) | Cache des résultats RAG |
+| [Tailwind CSS v4](https://tailwindcss.com/) | Interface UI |
+| [GSAP](https://greensock.com/gsap/) | Animations |
+| [Jest](https://jestjs.io/) | Tests unitaires |
+| [Vercel](https://vercel.com/) | Déploiement |
+
+---
+
+## 🚀 Installation locale
 
 ```bash
-cd "C:\Users\pc\Documents\New Project"
+# 1. Cloner le projet
+git clone https://github.com/dosteeve2-hash/african-hybrid-agent.git
+cd african-hybrid-agent
+
+# 2. Installer les dépendances
 npm install
-copy .env.example .env.local  # ou create .env.local avec variables ci-dessous
-npm run dev
+
+# 3. Configurer les variables d'environnement
+cp .env.example .env.local
 ```
 
-### Accès
-
-- **Interface web** : `http://localhost:3000`
-- **Test API** : `http://localhost:3000/test`
-- **Santé** : `GET /api/health`
-- **Chat** : `POST /api/chat`
-- **Evidence Pack** : `POST /api/evidence`
-- **Corpus audit** : `GET /api/corpus`
-
----
-
-## Architecture
-
-### Composants clés
-
-```
-src/
-├── app/
-│   ├── page.tsx              # UI chat principal
-│   ├── test/page.tsx         # Page test interactive
-│   └── api/
-│       ├── chat/route.ts     # Chat conversationnel
-│       ├── evidence/route.ts # Evidence Pack (pour P2P)
-│       ├── corpus/route.ts   # Audit corpus
-│       ├── health/route.ts   # Health check
-│       └── audit/route.ts    # Logs d'audit (dev seulement)
-├── lib/
-│   ├── agent/
-│   │   ├── orchestrator.ts          # Cœur logique agent
-│   │   ├── system-prompt.ts         # Prompts système
-│   │   ├── evidence-pack-builder.ts # Construction paquets preuves
-│   │   └── query-from-profile.ts    # Parsing profils P2P
-│   ├── rag/
-│   │   ├── corpus.ts        # Chargement corpus + chunking
-│   │   ├── retrieve.ts      # Récupération sémantique + fast
-│   │   └── embeddings.ts    # TF-IDF, synonymes, relevance
-│   ├── llm/
-│   │   └── generate.ts      # Appel OpenAI-compatible + synthèse locale
-│   ├── governance/
-│   │   ├── rules.ts         # Règles gouvernance
-│   │   ├── credibility.ts   # Scoring fiabilité sources
-│   │   └── audit.ts         # Logging + audit trail
-│   └── types/
-│       ├── chat.ts          # Types messages et réponses
-│       └── evidence.ts      # Types paquets preuves
-data/
-├── corpus/
-│   ├── gouvernance-locale-burkina.md
-│   ├── agriculture-agroecologie-ouest-africain.md
-│   ├── entrepreneuriat-femmes-inclusion-financiere.md
-│   ├── numerique-innovation-afrique.md
-│   └── [autres sources...]
-docs/
-├── DATA_PIPELINE.md     # Roadmap technique
-├── GOVERNANCE.md        # Politique sources
-├── API_REFERENCE.md     # Référence API détaillée (NEW)
-└── DEPLOYMENT.md        # Guide déploiement prod (NEW)
-```
-
----
-
-## Variables d'environnement
-
-### Essentielles
+Renseigner dans `.env.local` :
 
 ```env
-# LLM (optionnel - fonctionne sans)
+# LLM (optionnel — fonctionne sans)
 OPENAI_API_KEY=sk-...
 OPENAI_BASE_URL=https://api.openai.com/v1
 OPENAI_MODEL=gpt-4o-mini
 
 # Sécurité API
-AGENT_API_KEY=votre-clé-secrète-api  # Protège /api/evidence
+AGENT_API_KEY=votre-clé-secrète-api
 ```
 
-### Optionnelles
+```bash
+# 4. Lancer en développement
+npm run dev
+# → http://localhost:3000
 
-```env
-# Pour déploiement
-NODE_ENV=development|production
-PUBLIC_URL=http://localhost:3000
+# 5. Générer les embeddings corpus
+npm run generate-embeddings
+
+# 6. Lancer les tests
+npm test
 ```
 
 ---
 
-## Utilisation
+## 🔌 API Endpoints
 
-### 1. Chat simple
+| Endpoint | Méthode | Description |
+|----------|---------|-------------|
+| `/api/chat` | POST | Chat conversationnel avec RAG |
+| `/api/evidence` | POST | Evidence Pack pour Problem to Project Africa |
+| `/api/corpus` | GET | Audit du corpus chargé |
+| `/api/health` | GET | Health check |
+| `/api/audit` | GET | Logs d'audit (dev seulement) |
+
+### Exemple — Chat
 
 ```bash
-curl -X POST http://localhost:3000/api/chat \
+curl -X POST https://burkinacollect.vercel.app/api/chat \
   -H "Content-Type: application/json" \
   -d '{
-    "messages": [
-      { "role": "user", "content": "Comment faire entrepreneuriat au Burkina?" }
-    ],
+    "messages": [{ "role": "user", "content": "Comment créer une entreprise au Burkina?" }],
     "mode": "general",
     "searchMode": "semantic"
   }'
 ```
 
-### 2. Evidence Pack (Problem to Project Africa)
+### Exemple — Evidence Pack
 
 ```bash
-curl -X POST http://localhost:3000/api/evidence \
+curl -X POST https://burkinacollect.vercel.app/api/evidence \
   -H "Content-Type: application/json" \
   -d '{
     "recommendationProfile": {
       "country": "Burkina Faso",
       "preferredSector": "agriculture",
-      "observedProblem": "Productivité faible, manque formation",
+      "observedProblem": "Faible productivité agricole",
       "skills": ["organisation", "vente"],
-      "constraints": "Budget <1M FCFA"
+      "constraints": "Budget < 1M FCFA"
     },
-    "maxItems": 8,
-    "searchMode": "semantic"
+    "maxItems": 8
   }'
 ```
 
-### 3. Audit corpus
-
-```bash
-curl -X GET http://localhost:3000/api/corpus
-```
-
 ---
 
-## Modes recherche
-
-### 🚀 Sémantique (défaut, recommandé)
-
-**Algorithme**: TF-IDF + similarité cosinus + dictionnaire synonymes africains
-
-**Avantages**:
-- Comprend sens, pas juste mots clés
-- Boost géographique (BF, ML, SN, etc.)
-- Scoring fiabilité intégré
-- Capture contexte
-
-**Temps**: 20-50ms
-
-### ⚡ Fast (lexical)
-
-**Algorithme**: Tokenisation simple + matching
-
-**Avantages**:
-- Très rapide
-- Faible overhead
-
-**Temps**: 5-15ms
-
----
-
-## Données disponibles
-
-### Corpus initial
+## 📊 Corpus disponible
 
 | Source | Couverture | Crédibilité | Chunks |
-| --- | --- | --- | --- |
-| **Gouvernance locale Burkina** | Structures traditionnelles + modernes | high | ~25 |
-| **Agriculture agroécologie** | Zaï, demi-lune, cultures de rente | high | ~35 |
-| **Entrepreneuriat femmes** | Tontines, fintech, secteurs viables | high | ~30 |
-| **Numérique et innovation** | 4G, paiement mobile, fintech | medium | ~28 |
-| **Autres sources** | Divers (gouvernance, etc.) | variable | ~138 |
+|--------|-----------|-------------|--------|
+| Gouvernance locale Burkina | Structures traditionnelles + modernes | high | ~25 |
+| Agriculture agroécologie | Zaï, demi-lune, cultures de rente | high | ~35 |
+| Entrepreneuriat femmes | Tontines, fintech, secteurs viables | high | ~30 |
+| Numérique et innovation | 4G, paiement mobile, fintech | medium | ~28 |
+| Autres sources | Divers | variable | ~138 |
 
-**Total**: ~256 chunks, 5-10 sources
-
-### Ajouter sources
-
-```markdown
----
-title: "Titre complet"
-sourceType: "government|ngo|community|reference|product"
-region: "BF|ML|SN|CI|GH|..."
-credibilityTier: "official|high|medium|low"
----
-
-# Contenu...
-```
-
-Placer dans `data/corpus/nom-source.md`, recharger service.
+**Total** : ~256 chunks · 5-10 sources
 
 ---
 
-## APIs en détail
+## 🗺️ Roadmap
 
-Voir [API_REFERENCE.md](docs/API_REFERENCE.md) pour documentation complète.
+### ✅ v0.2 — Actuel
+- [x] RAG sémantique (TF-IDF + synonymes africains)
+- [x] Evidence Pack + profils Problem to Project Africa
+- [x] Gouvernance stricte des sources
+- [x] Audit trail complet
+- [x] API test interactive
 
-### `/api/chat` (POST)
+### 🔧 v0.3 — En cours
+- [ ] PostgreSQL + pgvector pour embeddings persistants
+- [ ] Import PDF + OCR automatisé
+- [ ] Dashboard admin corpus
+- [ ] Webhooks intégration Problem to Project Africa
 
-Chat conversationnel avec RAG.
-
-**Paramètres** : `messages[]`, `mode` (general|research), `searchMode` (semantic|fast), `maxCitations`, `boostRegion`
-
-**Réponse** : `reply`, `citations[]`, `confidence`, `agentSteps`, `warnings`
-
-### `/api/evidence` (POST)
-
-Evidence Pack pour recherche ou profil P2P.
-
-**Paramètres** : `query` ou `recommendationProfile`, `maxItems`, `searchMode`, `minReliability`
-
-**Réponse** : `items[]`, `uncertainty`, `confidence`
-
-### `/api/corpus` (GET)
-
-Audit du corpus chargé.
-
-**Réponse** : `sources[]`, `totalChunks`, `totalSources`
-
-### `/api/audit` (GET) — Dev seulement
-
-Logs d'audit (développement seulement, returns 403 en production).
+### 🚀 v1.0 — Futur
+- [ ] Multi-langue (Mooré, Dioula, Bambara)
+- [ ] Application mobile (Android/iOS)
+- [ ] Intégration WhatsApp / SMS
+- [ ] Fine-tuning sur corpus africain validé
 
 ---
 
-## Gouvernance des sources
-
-### Scoring crédibilité
+## 🔒 Gouvernance des sources
 
 | Tier | Score | Interprétation |
-| --- | --- | --- |
+|------|-------|----------------|
 | `official` | 95 | Source institutionnelle vérifiée |
 | `high` | 85 | ONG partenaire, publication validée |
 | `medium` | 65 | Notes internes, travaux en cours |
 | `low` | 40 | Opinion, à contre-vérifier |
 
-### Anti-biais
-
-- ✅ Prioriser sources locales africaines
-- ✅ Signaler affirmations sans couverture corpus
-- ✅ Documenter provenance, date, licence
-- ✅ Garder contradictions visibles
-- ❌ Pas de web-scraping aveugle
-
-Voir [GOVERNANCE.md](docs/GOVERNANCE.md) pour détails.
+**Principes anti-biais** : prioriser les sources locales africaines, signaler les affirmations sans couverture, conserver les contradictions visibles.
 
 ---
 
-## Roadmap
+## 🤝 Contribuer
 
-### Phase actuelle (v0.2) ✅
+Pour ajouter des sources au corpus :
 
-- ✅ RAG sémantique (TF-IDF + synonymes africains)
-- ✅ Audit logs complet + tracabilité
-- ✅ Evidence Pack avancé + profils P2P
-- ✅ Corpus enrichi (gouvernance, agriculture, entrepreneuriat femmes, numérique)
-- ✅ API test interactive
-- ✅ Gouvernance stricte des sources
-
-### Phase prochaine (v0.3) 🔄
-
-- [ ] PostgreSQL + pgvector pour embeddings persistant
-- [ ] Import PDF + OCR automated
-- [ ] Web scraper + validation humaine
-- [ ] Multi-langue (mooré, dioula, bambara)
-- [ ] Dashboard admin corpus
-- [ ] Webhooks intégration Problem to Project Africa
-
-### Futur (v1.0+)
-
-- [ ] Fine-tuning post-corpus validé
-- [ ] Real-time collaboration source validation
-- [ ] Mobile app (Android/iOS)
-- [ ] Intégration WhatsApp/SMS
-- [ ] Marché sources (paiement contributeurs)
-
+```markdown
+---
+title: "Titre complet de la source"
+sourceType: "government|ngo|community|reference"
+region: "BF|ML|SN|CI|GH|..."
+credibilityTier: "official|high|medium|low"
 ---
 
-## Déploiement
-
-Voir [DEPLOYMENT.md](docs/DEPLOYMENT.md) pour :
-- 🐳 Docker + docker-compose
-- ☁️ Vercel, Railway.app
-- 📊 Monitoring et scaling
-- 🔒 Sécurité production
-- 🚀 Performance optimization
-
-### Quick start Docker
-
-```bash
-docker-compose up -d
-# Service sur http://localhost:3000
+# Contenu de la source...
 ```
 
----
-
-## Performance
-
-| Opération | Latence | Notes |
-| --- | --- | --- |
-| Recherche corpus (semantic) | 20-50ms | TF-IDF pré-calculé |
-| Chat sans LLM | 100-300ms | Synthèse locale |
-| Chat avec LLM | 1-3s | Appel OpenAI-compatible |
-| Evidence Pack | 50-150ms | Même RAG que chat |
-| Audit logs query | <1ms | En mémoire |
+Placer dans `data/corpus/nom-source.md`, ouvrir une PR.
 
 ---
 
-## Développement
+## 📄 Licence
 
-### Lancer dev
-
-```bash
-npm run dev  # localhost:3000 avec hot reload
-```
-
-### Tester APIs
-
-```bash
-npm test    # Jest (optionnel, à configurer)
-```
-
-### Linter
-
-```bash
-npm run lint
-```
+MIT © 2026 [Steve Donald Compaoré](https://github.com/dosteeve2-hash)
 
 ---
 
-## Support et contribution
+<div align="center">
 
-### Questions?
+**Un assistant qui connaît l'Afrique — sans biais, sans intermédiaire**
 
-- 📘 Lire [API_REFERENCE.md](docs/API_REFERENCE.md)
-- 🧪 Tester sur `/test` page interactive
-- 📊 Vérifier `/api/corpus` pour sources disponibles
+*Fait avec ❤️ pour l'entrepreneuriat africain authentique · [burkinacollect.vercel.app](https://burkinacollect.vercel.app)*
 
-### Améliorations
-
-Pour ajouter sources ou signaler bugs:
-
-1. Créer issue/PR
-2. Formater source avec frontmatter YAML
-3. Valider crédibilité (tier officiel minimum)
-4. Tester sur `/api/evidence` avant merge
-
----
-
-## Connexion Problem to Project Africa
-
-Le projet Agent Hybride peut servir de **moteur de contexte** pour P2P:
-
-1. **P2P envoie profil** (`POST /api/evidence`):
-   ```json
-   { "recommendationProfile": { "country": "BF", "sector": "agriculture", ... } }
-   ```
-
-2. **Agent retourne Evidence Pack**:
-   ```json
-   { "items": [...sources], "uncertainty": { "confidence": 0.78 } }
-   ```
-
-3. **P2P exploite**:
-   - Enrichit recommandations avec contexte local
-   - Affiche sources fiables
-   - Documente raisons recommandations
-
----
-
-## Licence
-
-MIT / Ouvrir
-
----
-
-## Auteurs
-
-Développé pour initiatives entrepreneuriat africain authentique.
-
-**Dernière mise à jour**: Mai 2026 | **Version**: 0.2.0
+</div>
