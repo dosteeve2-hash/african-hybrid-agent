@@ -4,10 +4,13 @@
 
 ### *Le premier agent IA hybride conçu pour et par l'Afrique*
 
+[![Build](https://github.com/dosteeve2-hash/african-hybrid-agent/actions/workflows/build.yml/badge.svg)](https://github.com/dosteeve2-hash/african-hybrid-agent/actions/workflows/build.yml)
+[![Tests](https://github.com/dosteeve2-hash/african-hybrid-agent/actions/workflows/test.yml/badge.svg)](https://github.com/dosteeve2-hash/african-hybrid-agent/actions/workflows/test.yml)
 [![Next.js](https://img.shields.io/badge/Next.js-16-black?style=for-the-badge&logo=next.js)](https://nextjs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?style=for-the-badge&logo=typescript)](https://www.typescriptlang.org/)
 [![Claude API](https://img.shields.io/badge/Anthropic-Claude-D97757?style=for-the-badge)](https://anthropic.com/)
 [![PostgreSQL](https://img.shields.io/badge/PostgreSQL-pgvector-336791?style=for-the-badge&logo=postgresql)](https://www.postgresql.org/)
+[![Vercel](https://img.shields.io/badge/Deployed-Vercel-000?style=for-the-badge&logo=vercel)](https://burkinacollect.vercel.app)
 [![License: MIT](https://img.shields.io/badge/License-MIT-F0A832?style=for-the-badge)](./LICENSE)
 
 **[🌐 Live Demo](https://burkinacollect.vercel.app)** · **[📖 API Reference](docs/API_REFERENCE.md)** · **[🐛 Report Bug](https://github.com/dosteeve2-hash/african-hybrid-agent/issues)**

@@ -28,6 +28,52 @@ const STARTERS = [
   "Comment monter une coopérative agricole au Mali ?",
 ];
 
+// ── Feature cards ─────────────────────────────────────────────────────────────
+
+const FEATURES = [
+  {
+    icon: "◈",
+    title: "RAG Sémantique",
+    body: "BM25 + TF-IDF + synonymes africains. Contexte précis depuis 256 chunks de corpus local.",
+    color: "#F0A832",
+  },
+  {
+    icon: "◇",
+    title: "Evidence Pack",
+    body: "Génère des preuves contextuelles pour transformer vos idées en projets financables.",
+    color: "#2DD4FF",
+  },
+  {
+    icon: "◉",
+    title: "Sources vérifiées",
+    body: "Scoring de crédibilité 40–95 par source (official/high/medium/low). Zéro biais occidental.",
+    color: "#22D98A",
+  },
+  {
+    icon: "◆",
+    title: "Anti-biais",
+    body: "Priorisation des sources locales africaines. Boost géographique BF/ML/SN configurable.",
+    color: "#a78bfa",
+  },
+];
+
+// ── How it works ──────────────────────────────────────────────────────────────
+
+const HOW_IT_WORKS = [
+  {
+    title: "Pose ta question",
+    body: "En français ou en langue locale. Aisha comprend agriculture, entrepreneuriat, gouvernance africaine.",
+  },
+  {
+    title: "RAG local",
+    body: "Les 256 fragments africains sont scorés. Les sources les plus pertinentes et crédibles remontent.",
+  },
+  {
+    title: "Réponse sourcée",
+    body: "Chaque réponse cite ses sources avec score de crédibilité. Tu vois d'où vient l'information.",
+  },
+];
+
 // ── Markdown renderer ─────────────────────────────────────────────────────────
 
 function renderMarkdown(text: string): string {
@@ -380,18 +426,61 @@ export default function Home() {
       <div className="flex-1 overflow-y-auto px-5 py-6 lg:px-8">
         <div className="mx-auto max-w-3xl space-y-6">
           {messages.length === 0 && (
-            <div data-reveal-group className="grid gap-2 sm:grid-cols-2">
-              {STARTERS.map((prompt) => (
-                <button
-                  key={prompt}
-                  onClick={() => void send(prompt)}
-                  disabled={loading}
-                  className="rounded-xl border border-[var(--border2)] bg-[var(--bg3)]/60 p-4 text-left text-sm text-[var(--text2)] hover:border-[var(--gold)]/50 hover:bg-[var(--gold)]/5 hover:text-[var(--text)] transition-all disabled:opacity-50"
-                >
-                  {prompt}
-                </button>
-              ))}
-            </div>
+            <>
+              <div data-reveal-group className="grid gap-2 sm:grid-cols-2">
+                {STARTERS.map((prompt) => (
+                  <button
+                    key={prompt}
+                    onClick={() => void send(prompt)}
+                    disabled={loading}
+                    className="rounded-xl border border-[var(--border2)] bg-[var(--bg3)]/60 p-4 text-left text-sm text-[var(--text2)] hover:border-[var(--gold)]/50 hover:bg-[var(--gold)]/5 hover:text-[var(--text)] transition-all disabled:opacity-50"
+                  >
+                    {prompt}
+                  </button>
+                ))}
+              </div>
+
+              {/* ── Features ─────────────────────────────────────────────── */}
+              <div className="mt-10">
+                <p className="mb-4 font-mono text-[11px] uppercase tracking-widest text-[var(--text3)]">
+                  Fonctionnalités
+                </p>
+                <div className="grid gap-3 sm:grid-cols-2">
+                  {FEATURES.map((f) => (
+                    <div
+                      key={f.title}
+                      className="rounded-xl border border-[var(--border2)] bg-[var(--bg3)]/60 p-4 transition-colors hover:border-[var(--gold)]/30"
+                    >
+                      <span className="text-xl leading-none" style={{ color: f.color }}>
+                        {f.icon}
+                      </span>
+                      <h3 className="mt-2 text-sm font-semibold text-[var(--text)]">{f.title}</h3>
+                      <p className="mt-1 text-xs leading-relaxed text-[var(--text3)]">{f.body}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* ── Comment ça marche ─────────────────────────────────────── */}
+              <div className="mt-10">
+                <p className="mb-4 font-mono text-[11px] uppercase tracking-widest text-[var(--text3)]">
+                  Comment ça marche
+                </p>
+                <div className="grid gap-4 sm:grid-cols-3">
+                  {HOW_IT_WORKS.map((step, i) => (
+                    <div key={step.title} className="flex items-start gap-3">
+                      <span className="shrink-0 flex h-7 w-7 items-center justify-center rounded-full border border-[var(--gold)]/40 bg-[var(--gold)]/10 font-mono text-xs font-bold text-[var(--gold)]">
+                        {i + 1}
+                      </span>
+                      <div>
+                        <p className="text-sm font-semibold text-[var(--text)]">{step.title}</p>
+                        <p className="mt-0.5 text-xs leading-relaxed text-[var(--text3)]">{step.body}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </>
           )}
 
           {messages.map((msg, i) => (
