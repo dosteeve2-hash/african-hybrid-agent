@@ -2,6 +2,10 @@ name: Test Suite
 
 on: [push, pull_request]
 
+concurrency:
+  group: test-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   test:
     runs-on: ubuntu-latest
@@ -36,11 +40,19 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '18'
+          # Next 16 exige Node >= 20 : le workflow tournait sur Node 18.
+          node-version: '22'
           cache: 'npm'
 
       - name: Install dependencies
-        run: npm install
+        run: npm ci
+
+      # Le lint ne tournait que dans build.yml, donc jamais sur une PR.
+      - name: Run linter
+        run: npm run lint
+
+      - name: Typecheck
+        run: npx tsc --noEmit
 
       - name: Run tests
         run: npm test -- --forceExit --coverage
@@ -52,7 +64,8 @@ jobs:
         run: npm run build
 
       - name: Upload coverage
-        uses: codecov/codecov-action@v3
+        # v3 est archivée ; v5 est la version courante de l'action.
+        uses: codecov/codecov-action@v5
         if: always()
         with:
           files: ./coverage/coverage-final.json

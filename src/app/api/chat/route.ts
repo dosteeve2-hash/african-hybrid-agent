@@ -3,6 +3,7 @@ import { runAgentTurn, streamAgentTurn, type AgentRunOptions } from "@/lib/agent
 import { AuditService, ChatService } from "@/lib/db/services";
 import { initializePool } from "@/lib/db/client";
 import { getCachedSessionData, cacheSessionData, initializeRedis } from "@/lib/cache/redis";
+import { checkRateLimit, clientIdentifier } from "@/lib/rate-limit";
 import type { ChatMessage, ChatMode, StreamChunk } from "@/lib/types/chat";
 
 function isChatMessage(x: unknown): x is ChatMessage {
@@ -32,6 +33,30 @@ async function logOptional(component: string, action: string, level: "info" | "e
 }
 
 export async function POST(request: Request) {
+  // Règle CLAUDE.md : 20 requêtes par utilisateur et par heure sur les
+  // endpoints IA. C'est le seul endpoint qui appelle le modèle, donc le seul
+  // dont l'abus se facture.
+  const rate = await checkRateLimit(clientIdentifier(request));
+  if (!rate.allowed) {
+    await logOptional("orchestrator", "rate_limited", "info", {
+      retryAfter: rate.retryAfter,
+      sharedCounter: rate.shared,
+    });
+    return NextResponse.json(
+      {
+        error: `Limite de ${rate.limit} requêtes par heure atteinte. Réessayez dans ${Math.ceil(rate.retryAfter / 60)} minute(s).`,
+      },
+      {
+        status: 429,
+        headers: {
+          "Retry-After": String(rate.retryAfter),
+          "RateLimit-Limit": String(rate.limit),
+          "RateLimit-Remaining": "0",
+        },
+      },
+    );
+  }
+
   const body = (await request.json()) as {
     messages?: unknown[];
     mode?: ChatMode;

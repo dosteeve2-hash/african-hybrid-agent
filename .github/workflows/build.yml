@@ -4,6 +4,10 @@ on:
   push:
     branches: [main]
 
+concurrency:
+  group: build-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -14,39 +18,34 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '18'
+          # Next 16 exige Node >= 20 : le workflow tournait sur Node 18.
+          node-version: '22'
           cache: 'npm'
 
+      # `npm ci` échoue si package-lock.json a divergé de package.json,
+      # contrairement à `npm install` qui le réécrit en silence.
       - name: Install dependencies
-        run: npm install
+        run: npm ci
 
       - name: Run linter
         run: npm run lint
 
+      - name: Typecheck
+        run: npx tsc --noEmit
+
       - name: Build
         run: npm run build
 
+      # Le script est du TF-IDF local, sans appel d'API : il tourne sans secret.
       - name: Generate embeddings
         run: npm run generate-embeddings
 
       - name: Archive build artifacts
-        uses: actions/upload-artifact@v3
+        # v3 est désactivée par GitHub depuis janvier 2025 : l'étape échouait.
+        uses: actions/upload-artifact@v4
         with:
           name: build-artifacts
           path: |
             .next
             data/embeddings
-
-  deploy:
-    needs: build
-    runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main'
-
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Deploy to production
-        run: |
-          echo "🚀 Deploying to production..."
-          # Add your deployment steps here (Vercel, Railway, etc.)
-          # Example: vercel deploy --prod --token ${{ secrets.VERCEL_TOKEN }}
+          retention-days: 7
