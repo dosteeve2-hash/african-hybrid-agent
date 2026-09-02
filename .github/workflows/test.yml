@@ -10,6 +10,11 @@ jobs:
   test:
     runs-on: ubuntu-latest
 
+    env:
+      # Exposé ici pour que la condition du step d'envoi puisse le tester :
+      # `secrets` n'est pas accessible depuis le `if` d'une étape.
+      CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+
     services:
       postgres:
         image: postgres:15-alpine
@@ -63,9 +68,16 @@ jobs:
       - name: Build
         run: npm run build
 
+      # v3 est archivée ; v5 est la version courante — mais elle exige un token,
+      # même sur un dépôt public, là où v3 acceptait un envoi anonyme. Sans le
+      # secret, l'action sort en erreur et faisait échouer le job entier alors
+      # que les 50 tests passaient. L'envoi n'a donc lieu que si le token existe,
+      # et il ne bloque jamais la CI : la couverture est une information, pas une
+      # condition de fusion.
       - name: Upload coverage
-        # v3 est archivée ; v5 est la version courante de l'action.
+        if: ${{ always() && env.CODECOV_TOKEN != '' }}
+        continue-on-error: true
         uses: codecov/codecov-action@v5
-        if: always()
         with:
+          token: ${{ secrets.CODECOV_TOKEN }}
           files: ./coverage/coverage-final.json
