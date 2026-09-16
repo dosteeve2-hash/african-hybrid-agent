@@ -267,7 +267,9 @@ export default function AdminDashboard() {
             <h3>🚀 Setup Instructions</h3>
             <p>1. Set environment variable:</p>
             <code style={{ display: 'block', backgroundColor: '#fff', padding: '10px', marginBottom: '10px' }}>
-              export ADMIN_API_KEY="your-secret-key-here"
+              {/* Commande shell : les guillemets doivent rester littéraux, d'où
+                  l'expression JS plutôt que du texte JSX. */}
+              {'export ADMIN_API_KEY="your-secret-key-here"'}
             </code>
             <p>2. Authenticate above with your key</p>
             <p>3. Manage corpus sources with full CRUD operations</p>

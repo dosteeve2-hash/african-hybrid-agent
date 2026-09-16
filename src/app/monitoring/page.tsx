@@ -169,19 +169,24 @@ export default function AnalyticsDashboard() {
   const [loading, setLoading] = useState(true);
   const [lastRefresh, setLastRefresh] = useState<Date | null>(null);
 
-  const fetchData = useCallback(async () => {
-    setLoading(true);
-    try {
-      const res = await fetch("/api/analytics");
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      setData(await res.json());
-      setLastRefresh(new Date());
-    } catch {
-      // keep previous data
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+  // `loading` démarre à true et ne repasse jamais à true ensuite : le
+  // rafraîchissement toutes les 30 s ne doit pas vider le tableau de bord.
+  // Tous les setState vivent dans les callbacks de la promesse, l'effet
+  // ci-dessous n'en pose donc aucun de façon synchrone.
+  const fetchData = useCallback(
+    () =>
+      fetch("/api/analytics")
+        .then(async (res) => {
+          if (!res.ok) throw new Error(`HTTP ${res.status}`);
+          setData(await res.json());
+          setLastRefresh(new Date());
+        })
+        .catch(() => {
+          // keep previous data
+        })
+        .finally(() => setLoading(false)),
+    [],
+  );
 
   useEffect(() => {
     void fetchData();

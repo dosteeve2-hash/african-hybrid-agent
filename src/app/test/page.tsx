@@ -71,7 +71,7 @@ export default function ApiTestPage() {
       <div className="max-w-6xl mx-auto">
         <h1 className="text-4xl font-bold mb-2">🧪 Agent Hybride Africain - API Test</h1>
         <p className="text-slate-300 mb-8">
-          Testez toutes les fonctionnalités de l'agent en temps réel
+          Testez toutes les fonctionnalités de l’agent en temps réel
         </p>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -292,7 +292,7 @@ export default function ApiTestPage() {
               )}
 
               {!result && !error && (
-                <p className="text-slate-400">Les résultats s'afficheront ici...</p>
+                <p className="text-slate-400">Les résultats s’afficheront ici...</p>
               )}
             </div>
           </div>
