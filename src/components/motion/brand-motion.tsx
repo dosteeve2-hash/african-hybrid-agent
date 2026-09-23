@@ -1,6 +1,6 @@
 "use client";
 
-/* Motion signature STEEVE.DO — charte « Nuit Sahélienne & Or » §5bis
+/* Motion signature — charte FORGE Afrika v3 §5bis
    [data-hero="n"] : séquence d'entrée · [data-reveal-group] : stagger au scroll
    Respecte prefers-reduced-motion. */
 

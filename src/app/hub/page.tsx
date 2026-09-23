@@ -28,7 +28,7 @@ const PROJECTS: Project[] = [
     stack: ["Next.js", "Ollama", "BM25", "TypeScript"],
     href: "/",
     github: "https://github.com/dosteeve2-hash/african-hybrid-agent",
-    accent: "#F0A832",
+    accent: "#D4AF37",
     icon: "◈",
     connects: ["p2p", "burkina", "mifa"],
   },
@@ -77,7 +77,7 @@ const PROJECTS: Project[] = [
 ];
 
 const STATUS_LABELS: Record<Project["status"], { label: string; color: string }> = {
-  live:       { label: "Live",       color: "#F0A832" },
+  live:       { label: "Live",       color: "#D4AF37" },
   beta:       { label: "Beta",       color: "#3b82f6" },
   dev:        { label: "En dev",     color: "#f59e0b" },
   conception: { label: "Conception", color: "#6b7280" },
@@ -99,13 +99,13 @@ export default function HubPage() {
           className="pointer-events-none absolute inset-0 opacity-10"
           style={{
             background:
-              "radial-gradient(ellipse 80% 60% at 50% 0%, #F0A832 0%, transparent 70%)",
+              "radial-gradient(ellipse 80% 60% at 50% 0%, #D4AF37 0%, transparent 70%)",
           }}
         />
         <div className="relative mx-auto max-w-4xl px-6 text-center">
           <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-[var(--gold)]/30 bg-[var(--gold)]/10 px-4 py-1.5 font-mono text-[11px] uppercase tracking-widest text-[var(--gold)]">
             <span className="h-1.5 w-1.5 rounded-full bg-[var(--gold)] animate-pulse" />
-            Écosystème Tech Africain — Steve Donald Compaoré
+            Écosystème Tech Africain — Steeve Donald Compaoré
           </div>
           <h1 className="mb-4 font-serif text-4xl font-bold italic tracking-tight text-[var(--text)] sm:text-5xl">
             L&apos;Écosystème{" "}
@@ -260,7 +260,7 @@ export default function HubPage() {
               icon="◎"
               title="Souveraineté"
               body="LLMs locaux avec Ollama. Données hébergées en Afrique dans le futur. Aucune dépendance aux GAFA."
-              color="#F0A832"
+              color="#D4AF37"
             />
             <VisionCard
               icon="◑"

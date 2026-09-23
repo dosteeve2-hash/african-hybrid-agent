@@ -1,42 +1,42 @@
 @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600..800;1,600..800&family=Outfit:wght@300..700&family=JetBrains+Mono:wght@400;500&display=swap');
 @import "tailwindcss";
 
-/* Charte STEEVE.DO — « Nuit Sahélienne & Or » v1.0 */
+/* Charte FORGE Afrika — Navy × Gold × Cyan v3 */
 :root {
-  --bg:      #070E1F;
-  --bg2:     #0C1528;
-  --bg3:     #111D34;
-  --surface: #0C1528;
-  --surface-2: #111D34;
+  --bg:      #0A1628;
+  --bg2:     #0E1F3D;
+  --bg3:     #142B52;
+  --surface: #0E1F3D;
+  --surface-2: #142B52;
   --border:  #16233D;
   --border2: #1F3054;
-  --gold:    #F0A832;
-  --gold2:   #F7C060;
-  --gold3:   #C07D10;
-  --accent:  #F0A832;
-  --accent-dim: #C07D10;
+  --gold:    #D4AF37;
+  --gold2:   #F5D67A;
+  --gold3:   #B8962E;
+  --accent:  #D4AF37;
+  --accent-dim: #B8962E;
   --text:    #F5F0E8;
   --text2:   #9BA8C4;
   --text3:   #4E5F82;
   --muted:   #4E5F82;
   --muted-2: #9BA8C4;
-  --cyan:    #2DD4FF;
+  --cyan:    #00BCD4;
   --green:   #22D98A;
   --red:     #EF4444;
 }
 
-/* Remap Tailwind : emerald → Or, zinc → Nuit (charte STEEVE.DO) */
+/* Remap Tailwind : emerald → Or, zinc → Nuit (charte FORGE Afrika v3) */
 @theme {
-  --color-emerald-100: #FBE3B5;
-  --color-emerald-200: #F7C060;
-  --color-emerald-300: #F7C060;
-  --color-emerald-400: #F4B446;
-  --color-emerald-500: #F0A832;
-  --color-emerald-600: #C07D10;
-  --color-emerald-700: #9A640D;
-  --color-emerald-800: #6E470A;
-  --color-emerald-900: #4A3206;
-  --color-emerald-950: #2E1F04;
+  --color-emerald-100: #F5E7BF;
+  --color-emerald-200: #F5D67A;
+  --color-emerald-300: #E9C95F;
+  --color-emerald-400: #DDBC4A;
+  --color-emerald-500: #D4AF37;
+  --color-emerald-600: #B8962E;
+  --color-emerald-700: #977A26;
+  --color-emerald-800: #6F591C;
+  --color-emerald-900: #4A3B13;
+  --color-emerald-950: #2E250C;
   --color-zinc-100: #F5F0E8;
   --color-zinc-200: #DDE3EF;
   --color-zinc-300: #C7CFDF;
@@ -45,8 +45,8 @@
   --color-zinc-600: #4E5F82;
   --color-zinc-700: #1F3054;
   --color-zinc-800: #172240;
-  --color-zinc-900: #0C1528;
-  --color-zinc-950: #070E1F;
+  --color-zinc-900: #0E1F3D;
+  --color-zinc-950: #0A1628;
 }
 
 * {
