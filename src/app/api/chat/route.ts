@@ -4,6 +4,7 @@ import { AuditService, ChatService } from "@/lib/db/services";
 import { initializePool } from "@/lib/db/client";
 import { getCachedSessionData, cacheSessionData, initializeRedis } from "@/lib/cache/redis";
 import { checkRateLimit, clientIdentifier } from "@/lib/rate-limit";
+import { chatCacheKey } from "@/lib/cache/chat-cache-key";
 import type { ChatMessage, ChatMode, StreamChunk } from "@/lib/types/chat";
 
 function isChatMessage(x: unknown): x is ChatMessage {
@@ -136,7 +137,10 @@ export async function POST(request: Request) {
 
   // Cache check
   await initializeRedis();
-  const cacheKey = `session:${sessionId}:${Buffer.from(JSON.stringify(messages)).toString("base64").slice(0, 32)}`;
+  // `cacheSessionData` préfixe déjà par `session:` — la clé n'a donc pas à le
+  // refaire. Et elle est un condensé de TOUTE la conversation : voir
+  // lib/cache/chat-cache-key.ts pour ce que l'ancienne troncature effaçait.
+  const cacheKey = chatCacheKey(sessionId, { messages, mode, options });
   const cached = await getCachedSessionData(cacheKey);
   if (cached) {
     return NextResponse.json({ sessionId, dbAvailable: session.available, ...cached, fromCache: true });
